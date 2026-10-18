@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Informations de l'exploitation (depuis 12 · Paramètres)
+    Nom de l'exploitation, titulaire du compte et nombre de bandes.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.FarmInfoPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:FarmInfoViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,8,16,20" Spacing="12">
+
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="ic_farm.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                            <Label Text="Exploitation" Style="{StaticResource SectionTitleStyle}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Nom de l'exploitation" Style="{StaticResource FieldLabelStyle}" />
+                            <Border Style="{StaticResource FieldStyle}">
+                                <Entry Text="{Binding FarmName}" Placeholder="Ex. Ferme des Ailes" VerticalOptions="Center" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Titulaire du compte" Style="{StaticResource FieldLabelStyle}" />
+                            <Border Style="{StaticResource FieldStyle}">
+                                <Label Text="{Binding OwnerName}" VerticalOptions="Center" TextColor="{StaticResource TextSecondary}" />
+                            </Border>
+                            <Label Text="Pour modifier le titulaire, passez par le profil utilisateur." Style="{StaticResource CaptionStyle}" />
+                        </VerticalStackLayout>
+
+                        <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasError}">
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding ErrorMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Button Text="Enregistrer l'exploitation" Command="{Binding SaveCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CalcCardStyle}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Bandes" Style="{StaticResource FieldLabelStyle}" />
+                        <Label Text="{Binding BandsSummary}" FontSize="15" TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

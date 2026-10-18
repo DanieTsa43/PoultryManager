@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    00 · Bienvenue
+    Fond : photo de la maquette (poule, logo, élevage) en plein écran.
+    Les lignes de la grille reprennent les positions de la maquette (écran de 844 de haut) :
+    les textes suivent ainsi l'image quelle que soit la hauteur de l'écran.
+-->
+<ContentPage
+    x:Class="PoultryManager.Views.WelcomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:WelcomeViewModel"
+    Title="{Binding Title}"
+    BackgroundColor="{StaticResource DeepGreen}">
+
+    <Grid>
+        <!-- Image de fond (le logo de la poule est intégré à l'image) -->
+        <!-- Révélation progressive : opacité 0 -> 1 et léger dézoom, gérés dans le code-behind -->
+        <Image
+            x:Name="BackgroundImage"
+            Source="bienvenue_fond.jpg"
+            Aspect="AspectFill"
+            Opacity="0"
+            Scale="1.08"
+            SemanticProperties.Description="Poule pondeuse dans un feuillage vert, logo PoultryManager et élevage de poules avec des œufs" />
+
+        <!--
+            Les lignes sont repositionnées pour que le nom de l'application et le titre
+            remontent dans la zone assombrie/floutée, juste sous le logo de la poule,
+            tandis que les deux boutons restent visibles en bas sans défilement.
+        -->
+        <Grid
+            Padding="28,0"
+            RowDefinitions="44*,Auto,14*,Auto,27*,Auto,15*">
+
+            <!-- Nom de l'application (remonté sous le logo de la poule, dans la zone floutée) -->
+            <Label
+                x:Name="AppNameLabel"
+                Grid.Row="1"
+                Text="PoultryManager"
+                Style="{StaticResource WelcomeTextStyle}"
+                FontFamily="JakartaBold"
+                FontSize="38"
+                HorizontalTextAlignment="Center"
+                Opacity="0"
+                TranslationY="12"
+                SemanticProperties.HeadingLevel="Level1">
+                <Label.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="10" Opacity="0.45" />
+                </Label.Shadow>
+            </Label>
+
+            <!-- Accroche (remontée, centrée dans sa zone floutée) -->
+            <Label
+                x:Name="TitleLabel"
+                Grid.Row="3"
+                Margin="4,0,0,0"
+                Text="Votre élevage,&#10;mieux maîtrisé"
+                Style="{StaticResource WelcomeTextStyle}"
+                FontFamily="JakartaExtraBold"
+                FontSize="42"
+                LineHeight="1.05"
+                Opacity="0"
+                TranslationY="18"
+                SemanticProperties.HeadingLevel="Level2">
+                <Label.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="12" Opacity="0.45" />
+                </Label.Shadow>
+            </Label>
+
+            <!-- Actions -->
+            <VerticalStackLayout Grid.Row="5" Spacing="11">
+                <Button
+                    x:Name="StartButton"
+                    Text="Commencer"
+                    Style="{StaticResource WelcomePrimaryButtonStyle}"
+                    Command="{Binding StartCommand}"
+                    Opacity="0"
+                    TranslationY="12"
+                    SemanticProperties.Hint="Créer un compte PoultryManager" />
+
+                <Button
+                    x:Name="LoginButton"
+                    Text="J'ai déjà un compte"
+                    Style="{StaticResource WelcomeSecondaryButtonStyle}"
+                    Command="{Binding GoToLoginCommand}"
+                    Opacity="0"
+                    TranslationY="12"
+                    SemanticProperties.Hint="Se connecter à un compte existant" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>

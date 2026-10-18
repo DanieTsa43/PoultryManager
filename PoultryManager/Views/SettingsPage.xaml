@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    12 · Profil et paramètres (onglet Plus)
+    Exploitation, profil, unités, rappels, sauvegarde et déconnexion.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:SettingsViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+                <!-- Profil -->
+                <Border BackgroundColor="{StaticResource ForestGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 20" Padding="16">
+                    <Grid ColumnDefinitions="60,*" ColumnSpacing="14">
+                        <Border WidthRequest="60" HeightRequest="60" BackgroundColor="{StaticResource SageGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 30">
+                            <Label Text="{Binding Initials}" FontFamily="JakartaExtraBold" FontSize="20" TextColor="{StaticResource ForestGreen}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding FullName}" FontFamily="JakartaExtraBold" FontSize="18" TextColor="{StaticResource White}" />
+                            <Label Text="{Binding RoleText}" FontSize="13" TextColor="{StaticResource SageGreen}" />
+                            <Label Text="{Binding Email}" FontSize="13" TextColor="{StaticResource SageGreen}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Réglages -->
+                <Border Style="{StaticResource CardStyle}" Padding="0,4" StrokeShape="RoundRectangle 20">
+                    <VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="40,*,18" ColumnSpacing="12" Padding="14,10" MinimumHeightRequest="64" SemanticProperties.Description="Informations de l'exploitation">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditFarmCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Style="{StaticResource IconTileStyle}">
+                                <Image Source="ic_farm.png" WidthRequest="20" HeightRequest="20" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Informations de l'exploitation" FontFamily="JakartaBold" FontSize="15" />
+                                <Label Text="{Binding FarmText}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                        <Grid ColumnDefinitions="40,*,18" ColumnSpacing="12" Padding="14,10" MinimumHeightRequest="64" SemanticProperties.Description="Profil utilisateur">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Style="{StaticResource IconTileStyle}">
+                                <Image Source="ic_user.png" WidthRequest="20" HeightRequest="20" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Profil utilisateur" FontFamily="JakartaBold" FontSize="15" />
+                                <Label Text="{Binding Email}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                        <Grid ColumnDefinitions="40,*,18" ColumnSpacing="12" Padding="14,10" MinimumHeightRequest="64" SemanticProperties.Description="Unités de mesure">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditUnitsCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Style="{StaticResource IconTileStyle}">
+                                <Image Source="ic_units.png" WidthRequest="20" HeightRequest="20" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Unités de mesure" FontFamily="JakartaBold" FontSize="15" />
+                                <Label Text="{Binding UnitsText}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                        <Grid ColumnDefinitions="40,*,18" ColumnSpacing="12" Padding="14,10" MinimumHeightRequest="64" SemanticProperties.Description="Notifications et rappels">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditRemindersCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Style="{StaticResource IconTileStyle}">
+                                <Image Source="ic_bell_green.png" WidthRequest="20" HeightRequest="20" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Notifications et rappels" FontFamily="JakartaBold" FontSize="15" />
+                                <Label Text="{Binding ReminderText}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource BorderColor}" />
+                        <Grid ColumnDefinitions="40,*,18" ColumnSpacing="12" Padding="14,10" MinimumHeightRequest="64" SemanticProperties.Description="Sauvegarde des données">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BackupCommand}" />
+                            </Grid.GestureRecognizers>
+                            <Border Style="{StaticResource IconTileStyle}">
+                                <Image Source="ic_cloud.png" WidthRequest="20" HeightRequest="20" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="Sauvegarde des données" FontFamily="JakartaBold" FontSize="15" />
+                                <Label Text="{Binding BackupText}" Style="{StaticResource CaptionStyle}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Déconnexion" ImageSource="ic_logout.png" Style="{StaticResource DangerButtonStyle}" Command="{Binding LogoutCommand}" />
+                <Label Text="PoultryManager · version 1.0" Style="{StaticResource CaptionStyle}" FontSize="12" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

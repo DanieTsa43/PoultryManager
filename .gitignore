@@ -1,0 +1,47 @@
+## Fichiers générés par Visual Studio / .NET — à ne pas envoyer sur GitHub
+
+# Dossiers de compilation
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Ll]og/
+[Ll]ogs/
+
+# Dossier caché de Visual Studio
+.vs/
+
+# Fichiers propres à chaque utilisateur
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Paquets Android / Windows générés
+*.apk
+*.aab
+*.msix
+*.appx
+Resource.designer.cs
+
+# Divers
+*.log
+*.tmp
+*.cache
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,6 @@
+Les fichiers placés dans ce dossier (et ses sous-dossiers) sont déployés avec l'application
+en tant que ressources brutes (Build Action : MauiAsset).
+
+Exemple de lecture depuis le code :
+
+    await using var stream = await FileSystem.OpenAppPackageFileAsync("mon_fichier.json");

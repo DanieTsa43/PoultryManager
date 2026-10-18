@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Unités de mesure (depuis 12 · Paramètres)
+    Poids moyen d'un œuf, utilisé pour l'indice de conversion.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.UnitsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:UnitsViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,8,16,20" Spacing="12">
+
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="14">
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="ic_units.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                            <Label Text="Poids moyen d'un œuf" Style="{StaticResource SectionTitleStyle}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label
+                            Text="Sert au calcul de l'indice de conversion (kilos d'aliment pour un kilo d'œufs). 60 g par défaut."
+                            Style="{StaticResource CaptionStyle}" />
+
+                        <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                            <Label Text="{Binding WeightText}" FontFamily="JakartaExtraBold" FontSize="28" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            <Stepper Grid.Column="1" Value="{Binding EggWeight, Mode=TwoWay}" Minimum="30" Maximum="100" Increment="1" SemanticProperties.Description="Poids moyen d'un œuf" />
+                        </Grid>
+
+                        <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Button Text="Enregistrer les unités" Command="{Binding SaveCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CalcCardStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Unités utilisées dans l'application" Style="{StaticResource FieldLabelStyle}" />
+                        <Label Text="Aliment : kilogrammes (kg) pour les livraisons, grammes (g) par poule." FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Taux de ponte et mortalité : pourcentages (%)." FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Nombres d'œufs et de poules : unités entières." FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

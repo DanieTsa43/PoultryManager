@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Notifications et rappels (depuis 12 · Paramètres)
+    Rappel quotidien de saisie affiché sur l'accueil.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.RemindersPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:RemindersViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,8,16,20" Spacing="12">
+
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="14">
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="ic_bell.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                            <Label Text="Rappel de saisie quotidien" Style="{StaticResource SectionTitleStyle}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                            <Label Text="Activer le rappel" FontSize="16" FontFamily="JakartaSemiBold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding ReminderEnabled, Mode=TwoWay}" OnColor="{StaticResource ForestGreen}" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" IsVisible="{Binding ReminderEnabled}">
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="Heure du rappel" FontSize="16" FontFamily="JakartaSemiBold" TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="{Binding HourText}" FontFamily="JakartaExtraBold" FontSize="22" TextColor="{StaticResource ForestGreen}" />
+                            </VerticalStackLayout>
+                            <Stepper Grid.Column="1" Value="{Binding ReminderHour, Mode=TwoWay}" Minimum="6" Maximum="22" Increment="1" SemanticProperties.Description="Heure du rappel" />
+                        </Grid>
+
+                        <Label Text="{Binding Summary}" Style="{StaticResource CaptionStyle}" />
+
+                        <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Button Text="Enregistrer les rappels" Command="{Binding SaveCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

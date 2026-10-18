@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    10 · Bilan par bande
+    Effectifs, œufs, aliment, mortalité cumulée, taux moyen de ponte et taux par semaine.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.BandSummaryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    xmlns:controls="clr-namespace:PoultryManager.Controls"
+    x:DataType="vm:BandSummaryViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                <Label Text="{Binding Title}" Style="{StaticResource ScreenTitleStyle}" SemanticProperties.HeadingLevel="Level1" />
+                <Label Text="{Binding PeriodText}" Style="{StaticResource CaptionStyle}" />
+            </VerticalStackLayout>
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="10">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding TileRows}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:TileRow">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="14,12">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding Left.IsHighlighted}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                                            <Setter Property="Stroke" Value="{StaticResource ForestGreen}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Left.Label}" Style="{StaticResource TileCaptionStyle}" FontSize="13">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding Left.IsHighlighted}" Value="True">
+                                                    <Setter Property="TextColor" Value="{StaticResource SageGreen}" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Label Text="{Binding Left.Value}" Style="{StaticResource TileValueStyle}" FontSize="23">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Left.IsHighlighted}" Value="True">
+                                                        <Setter Property="TextColor" Value="{StaticResource White}" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <Label Text="{Binding Left.Extra}" IsVisible="{Binding Left.HasExtra}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ErrorText}" VerticalOptions="End" Margin="0,0,0,3" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="14,12">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding Right.IsHighlighted}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                                            <Setter Property="Stroke" Value="{StaticResource ForestGreen}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Right.Label}" Style="{StaticResource TileCaptionStyle}" FontSize="13">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding Right.IsHighlighted}" Value="True">
+                                                    <Setter Property="TextColor" Value="{StaticResource SageGreen}" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Label Text="{Binding Right.Value}" Style="{StaticResource TileValueStyle}" FontSize="23">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Right.IsHighlighted}" Value="True">
+                                                        <Setter Property="TextColor" Value="{StaticResource White}" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <Label Text="{Binding Right.Extra}" IsVisible="{Binding Right.HasExtra}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ErrorText}" VerticalOptions="End" Margin="0,0,0,3" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Évolution du taux de ponte" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Grid.Column="1" Text="{Binding WeeklyCaption}" Style="{StaticResource CaptionStyle}" />
+                        </Grid>
+                        <controls:BarChartView Points="{Binding WeeklyPoints}" HeightRequest="170" SemanticProperties.Description="Taux de ponte par semaine" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,4,0,0">
+                    <Button Text="Voir le détail" Command="{Binding ViewDetailCommand}" />
+                    <Button Grid.Column="1" Text="Exporter" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ExportCommand}" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

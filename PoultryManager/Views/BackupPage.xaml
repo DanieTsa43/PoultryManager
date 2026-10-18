@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Sauvegarde des données (depuis 12 · Paramètres)
+    Copie du fichier de base de données vers un autre emplacement.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.BackupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:BackupViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,8,16,20" Spacing="12">
+
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="14">
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="ic_download.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                            <Label Text="Copie de sauvegarde" Style="{StaticResource SectionTitleStyle}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label
+                            Text="Crée un fichier contenant toutes vos bandes et saisies. Vous pouvez l'enregistrer sur Google Drive, l'envoyer par e-mail ou le copier sur une clé USB."
+                            Style="{StaticResource CaptionStyle}" />
+
+                        <Label Text="{Binding LastBackupText}" FontFamily="JakartaSemiBold" FontSize="15" TextColor="{StaticResource TextPrimary}" />
+
+                        <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasError}">
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding ErrorMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Button Text="Créer une sauvegarde" Command="{Binding CreateBackupCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

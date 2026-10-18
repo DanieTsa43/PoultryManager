@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Profil utilisateur (depuis 12 · Paramètres)
+    Nom, téléphone, e-mail et changement du mot de passe.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.ProfileEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:ProfileEditViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Informations personnelles" Style="{StaticResource SectionTitleStyle}" />
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Nom complet" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding FullName}" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Téléphone" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding Phone}" Keyboard="Telephone" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Adresse e-mail" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding Email}" Keyboard="Email" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasProfileError}">
+                <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                    <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding ProfileError}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasProfileSuccess}">
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="{Binding ProfileSuccess}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                </HorizontalStackLayout>
+            </Border>
+                        <Button Text="Enregistrer le profil" Command="{Binding SaveProfileCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Mot de passe" Style="{StaticResource SectionTitleStyle}" />
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Mot de passe actuel" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding CurrentPassword}" Placeholder="" IsPassword="True" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Nouveau mot de passe" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding NewPassword}" Placeholder="6 caractères minimum" IsPassword="True" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Confirmer le nouveau mot de passe" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Entry Text="{Binding ConfirmPassword}" Placeholder="" IsPassword="True" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasPasswordError}">
+                <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                    <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding PasswordError}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasPasswordSuccess}">
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="{Binding PasswordSuccess}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                </HorizontalStackLayout>
+            </Border>
+                        <Button Text="Changer le mot de passe" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ChangePasswordCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

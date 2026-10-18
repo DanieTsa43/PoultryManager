@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<!--
+    Styles PoultryManager (voir docs/maquette/DESIGN.md, sections 3 à 6).
+    Polices déclarées dans MauiProgram.cs :
+    JakartaRegular (400) · JakartaMedium (500) · JakartaSemiBold (600) · JakartaBold (700) · JakartaExtraBold (800)
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ============ Pages ============ -->
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource PaleGreen}" />
+        <Setter Property="Shell.NavBarIsVisible" Value="False" />
+    </Style>
+
+    <!-- ============ Textes ============ -->
+    <Style x:Key="BaseLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="JakartaMedium" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+    <Style TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}" />
+
+    <!-- Titre d'écran d'accès : 28 / 800 -->
+    <Style x:Key="AccessTitleStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaExtraBold" />
+        <Setter Property="FontSize" Value="28" />
+    </Style>
+
+    <!-- Titre d'écran métier : 20 / 800 -->
+    <Style x:Key="ScreenTitleStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaExtraBold" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <!-- Titre de section : 15 / 700 -->
+    <Style x:Key="SectionTitleStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaBold" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <!-- Libellé de champ : 13 / 600 -->
+    <Style x:Key="FieldLabelStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Légende / texte secondaire : 13 -->
+    <Style x:Key="CaptionStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaRegular" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondarySmall}" />
+    </Style>
+
+    <!-- Message d'erreur -->
+    <Style x:Key="ErrorTextStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource ErrorText}" />
+    </Style>
+
+    <!-- Lien texte -->
+    <Style x:Key="LinkLabelStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaBold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource ButtonGreen}" />
+    </Style>
+
+    <!-- ============ Boutons ============ -->
+    <!-- Bouton principal : hauteur 52, fond #286B46, texte blanc 16 / 700, rayon 14 -->
+    <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="FontFamily" Value="JakartaBold" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource ButtonGreen}" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="52" />
+        <Setter Property="MinimumWidthRequest" Value="44" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <!-- État « chargement » de la maquette -->
+                            <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                            <Setter Property="TextColor" Value="{StaticResource SageGreen}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver" />
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}" />
+
+    <!-- Bouton secondaire : fond blanc, bordure #286B46, texte #174B35 -->
+    <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="TextColor" Value="{StaticResource ForestGreen}" />
+        <Setter Property="BorderColor" Value="{StaticResource ButtonGreen}" />
+        <Setter Property="BorderWidth" Value="1" />
+    </Style>
+
+    <!-- Bouton sensible : fond blanc, bordure #C94D4D, texte #B03E3E -->
+    <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="TextColor" Value="{StaticResource ErrorText}" />
+        <Setter Property="BorderColor" Value="{StaticResource AlertRed}" />
+        <Setter Property="BorderWidth" Value="1" />
+    </Style>
+
+    <!-- ============ Champs ============ -->
+    <Style TargetType="Entry">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource TextSecondarySmall}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+    </Style>
+
+    <Style TargetType="CheckBox">
+        <Setter Property="Color" Value="{StaticResource ButtonGreen}" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+        <Setter Property="MinimumWidthRequest" Value="44" />
+    </Style>
+
+    <Style TargetType="ActivityIndicator">
+        <Setter Property="Color" Value="{StaticResource White}" />
+    </Style>
+
+    <!-- ============ Conteneurs ============ -->
+    <!-- Carte : fond blanc, bordure 1 px #E1EAE3, rayon 16, sans ombre -->
+    <Style x:Key="CardStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <!-- Bandeau de succès : fond #DCE8DF, rayon 14 -->
+    <Style x:Key="SuccessBannerStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SageGreen}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="14,12" />
+    </Style>
+
+    <!-- ============ Écrans d'accès (00 · 01 · 02) ============ -->
+
+    <!-- Boutons de l'écran Bienvenue : semi-transparents, bordure blanche, rayon 22 -->
+    <Style x:Key="WelcomePrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="BackgroundColor" Value="{StaticResource WelcomePrimaryButton}" />
+        <Setter Property="BorderColor" Value="{StaticResource WelcomeButtonBorder}" />
+        <Setter Property="BorderWidth" Value="2" />
+        <Setter Property="CornerRadius" Value="22" />
+        <Setter Property="HeightRequest" Value="53" />
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <Style x:Key="WelcomeSecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource WelcomePrimaryButtonStyle}">
+        <Setter Property="BackgroundColor" Value="{StaticResource WelcomeSecondaryButton}" />
+        <Setter Property="HeightRequest" Value="48" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- Textes blancs de l'écran Bienvenue -->
+    <Style x:Key="WelcomeTextStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+    </Style>
+
+    <!-- Champ d'accès (écrans 01 et 02) : rayon 18, icône à gauche.
+         La bordure (transparente par défaut) devient rouge en cas d'erreur via un DataTrigger. -->
+    <Style x:Key="AccessFieldStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+        <Setter Property="Padding" Value="18,0,8,0" />
+    </Style>
+
+    <!-- Bouton principal des écrans d'accès : hauteur 62, rayon 20, texte 20 -->
+    <Style x:Key="AccessButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="HeightRequest" Value="62" />
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <!-- Bouton icône transparent (œil, flèche retour…) : cible tactile 44 × 44 -->
+    <Style x:Key="IconButtonStyle" TargetType="ImageButton">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="WidthRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="CornerRadius" Value="22" />
+    </Style>
+
+    <!-- Champ de l'écran Inscription : hauteur 50, fond #F2F7F3, bordure #E1EAE3, rayon 14.
+         La bordure devient rouge (2 px) en cas d'erreur via un DataTrigger. -->
+    <Style x:Key="RegisterFieldStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource PaleGreen}" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="16,0,4,0" />
+        <Setter Property="HeightRequest" Value="50" />
+    </Style>
+
+    <!-- Message d'erreur sous un champ -->
+    <Style x:Key="FieldErrorStyle" TargetType="Label" BasedOn="{StaticResource ErrorTextStyle}">
+        <Setter Property="Margin" Value="4,4,0,0" />
+    </Style>
+
+    <!-- ============ Écrans métier (03 à 12) ============ -->
+
+    <!-- En-tête : flèche retour + titre 20 / 800 -->
+    <Style x:Key="HeaderGridStyle" TargetType="Grid">
+        <Setter Property="Padding" Value="4,14,16,8" />
+        <Setter Property="ColumnSpacing" Value="2" />
+    </Style>
+
+    <!-- Champ de formulaire : hauteur 48, fond #F2F7F3, bordure #E1EAE3, rayon 12 -->
+    <Style x:Key="FieldStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource PaleGreen}" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <!-- Conteneur de formulaire : fond blanc, rayon 20 -->
+    <Style x:Key="FormCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="StrokeShape" Value="RoundRectangle 20" />
+    </Style>
+
+    <!-- Carte calculée : fond #DCE8DF, formule à gauche, résultat à droite -->
+    <Style x:Key="CalcCardStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SageGreen}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="14,12" />
+    </Style>
+
+    <!-- Bandeau d'erreur : fond #F6E3E3 -->
+    <Style x:Key="ErrorBannerStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource ErrorBackground}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="14,10" />
+    </Style>
+
+    <!-- Carte d'indicateur (tableau de bord) -->
+    <Style x:Key="StatCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="Padding" Value="12" />
+    </Style>
+
+    <!-- Pastille d'icône 40 × 40 -->
+    <Style x:Key="IconTileStyle" TargetType="Border">
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SageGreen}" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- Légende d'une carte : 12 px -->
+    <Style x:Key="TileCaptionStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaRegular" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondarySmall}" />
+    </Style>
+
+    <!-- Valeur d'indicateur : 22 / 800 -->
+    <Style x:Key="TileValueStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaExtraBold" />
+        <Setter Property="FontSize" Value="22" />
+    </Style>
+
+    <!-- Filtre « pilule » : contour seul ; vert forêt quand il est sélectionné (DataTrigger) -->
+    <Style x:Key="ChipStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 22" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="HeightRequest" Value="44" />
+    </Style>
+
+    <Style x:Key="ChipLabelStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- Badges « Active » / « Clôturée » -->
+    <Style x:Key="BadgeStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SageGreen}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Padding" Value="10,3" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="BadgeLabelStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontFamily" Value="JakartaBold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{StaticResource ForestGreen}" />
+    </Style>
+
+    <!-- Petit bouton d'une carte (Bilan / Modifier / Clôturer) : hauteur 44, rayon 12, texte 13 -->
+    <Style x:Key="SmallPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="8,0" />
+    </Style>
+
+    <Style x:Key="SmallSecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="8,0" />
+    </Style>
+
+    <Style x:Key="SmallDangerButtonStyle" TargetType="Button" BasedOn="{StaticResource DangerButtonStyle}">
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="8,0" />
+    </Style>
+
+    <!-- Listes déroulantes et dates -->
+    <Style TargetType="Picker">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="TitleColor" Value="{StaticResource TextSecondarySmall}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+    </Style>
+
+    <Style TargetType="DatePicker">
+        <Setter Property="FontFamily" Value="JakartaSemiBold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="Format" Value="dd/MM/yyyy" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="FontFamily" Value="JakartaMedium" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+</ResourceDictionary>

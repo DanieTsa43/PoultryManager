@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    02 · Inscription
+    Création d'un compte enregistré dans la base locale, puis ouverture du tableau de bord.
+-->
+<ContentPage
+    x:Class="PoultryManager.Views.RegisterPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:RegisterViewModel"
+    Title="{Binding Title}"
+    BackgroundColor="{StaticResource White}">
+
+    <Grid>
+        <!-- Feuilles décoratives en haut à droite -->
+        <Image
+            Source="deco_leaves.png"
+            Aspect="AspectFill"
+            HeightRequest="160"
+            VerticalOptions="Start"
+            InputTransparent="True" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="28,24,28,28" Spacing="10">
+
+                <ImageButton
+                    Margin="-12,0,0,0"
+                    HorizontalOptions="Start"
+                    Source="icon_back.png"
+                    Style="{StaticResource IconButtonStyle}"
+                    Command="{Binding GoBackCommand}"
+                    SemanticProperties.Description="Retour" />
+
+                <Label
+                    Margin="0,2,0,0"
+                    Text="{Binding Title}"
+                    Style="{StaticResource AccessTitleStyle}"
+                    SemanticProperties.HeadingLevel="Level1" />
+
+                <Label
+                    Margin="0,-4,0,10"
+                    Text="Rejoignez PoultryManager"
+                    Style="{StaticResource CaptionStyle}"
+                    FontSize="15" />
+
+                    <!-- Nom complet -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasFullNameError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="icon_field_user.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding FullName}"
+                                Placeholder="Nom complet"
+                                ReturnType="Next"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Nom complet" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding FullNameError}" IsVisible="{Binding HasFullNameError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Nom de l'exploitation -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasFarmNameError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="icon_field_farm.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding FarmName}"
+                                Placeholder="Nom de l'exploitation"
+                                ReturnType="Next"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Nom de l'exploitation" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding FarmNameError}" IsVisible="{Binding HasFarmNameError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Téléphone (facultatif) -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasPhoneError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="icon_field_phone.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding Phone}"
+                                Placeholder="Téléphone (facultatif)"
+                                Keyboard="Telephone"
+                                ReturnType="Next"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Téléphone (facultatif)" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding PhoneError}" IsVisible="{Binding HasPhoneError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Adresse e-mail -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasEmailError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                                <Image Source="icon_field_mail.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding Email}"
+                                Placeholder="Adresse e-mail"
+                                Keyboard="Email"
+                                ReturnType="Next"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Adresse e-mail" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding EmailError}" IsVisible="{Binding HasEmailError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Mot de passe -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasPasswordError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*,44" ColumnSpacing="10">
+                                <Image Source="icon_field_lock.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding Password}"
+                                Placeholder="Mot de passe"
+                                IsPassword="{Binding IsPasswordHidden}"
+                                ReturnType="Next"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Mot de passe" />
+                            <ImageButton
+                                Grid.Column="2"
+                                Source="icon_field_eye.png"
+                                Style="{StaticResource IconButtonStyle}"
+                                Command="{Binding TogglePasswordVisibilityCommand}"
+                                IsVisible="{Binding IsPasswordHidden}"
+                                SemanticProperties.Description="Afficher le mot de passe" />
+                            <ImageButton
+                                Grid.Column="2"
+                                Source="icon_eye_off.png"
+                                Style="{StaticResource IconButtonStyle}"
+                                Command="{Binding TogglePasswordVisibilityCommand}"
+                                IsVisible="{Binding IsPasswordVisible}"
+                                SemanticProperties.Description="Masquer le mot de passe" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding PasswordError}" IsVisible="{Binding HasPasswordError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                    <!-- Confirmer le mot de passe -->
+                    <VerticalStackLayout>
+                        <Border Style="{StaticResource RegisterFieldStyle}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding HasConfirmPasswordError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                                    <Setter Property="StrokeThickness" Value="2" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="20,*,44" ColumnSpacing="10">
+                                <Image Source="icon_field_lock.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Entry
+                                Grid.Column="1"
+                                Text="{Binding ConfirmPassword}"
+                                Placeholder="Confirmer le mot de passe"
+                                IsPassword="{Binding IsConfirmPasswordHidden}"
+                                ReturnType="Done"
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Confirmer le mot de passe" />
+                            <ImageButton
+                                Grid.Column="2"
+                                Source="icon_field_eye.png"
+                                Style="{StaticResource IconButtonStyle}"
+                                Command="{Binding ToggleConfirmPasswordVisibilityCommand}"
+                                IsVisible="{Binding IsConfirmPasswordHidden}"
+                                SemanticProperties.Description="Afficher le mot de passe" />
+                            <ImageButton
+                                Grid.Column="2"
+                                Source="icon_eye_off.png"
+                                Style="{StaticResource IconButtonStyle}"
+                                Command="{Binding ToggleConfirmPasswordVisibilityCommand}"
+                                IsVisible="{Binding IsConfirmPasswordVisible}"
+                                SemanticProperties.Description="Masquer le mot de passe" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding ConfirmPasswordError}" IsVisible="{Binding HasConfirmPasswordError}" Style="{StaticResource FieldErrorStyle}" />
+                    </VerticalStackLayout>
+
+                <!-- Conditions d'utilisation -->
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="2">
+                    <CheckBox IsChecked="{Binding AcceptTerms}" VerticalOptions="Start" />
+                    <Label
+                        Grid.Column="1"
+                        Padding="0,10"
+                        Text="J'accepte les conditions d'utilisation et la politique de confidentialité"
+                        FontSize="13"
+                        VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleAcceptTermsCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+                <Label
+                    Margin="4,-8,0,0"
+                    Text="{Binding TermsError}"
+                    IsVisible="{Binding HasTermsError}"
+                    Style="{StaticResource ErrorTextStyle}" />
+
+                <Label Text="{Binding FormError}" IsVisible="{Binding HasFormError}" Style="{StaticResource ErrorTextStyle}" />
+
+                <!-- Bouton principal -->
+                <Grid Margin="0,6,0,0">
+                    <Button
+                        Text="{Binding SubmitButtonText}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        HeightRequest="54"
+                        CornerRadius="16"
+                        Command="{Binding RegisterCommand}" />
+                    <ActivityIndicator
+                        Margin="20,0,0,0"
+                        WidthRequest="22"
+                        HeightRequest="22"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        IsRunning="{Binding IsBusy}"
+                        IsVisible="{Binding IsBusy}"
+                        InputTransparent="True" />
+                </Grid>
+
+                <!-- Lien vers la connexion -->
+                <Label
+                    Margin="0,8,0,0"
+                    Padding="0,12"
+                    HorizontalTextAlignment="Center"
+                    FontSize="14"
+                    TextColor="{StaticResource TextSecondarySmall}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Déjà un compte ? " FontFamily="JakartaMedium" />
+                            <Span Text="Se connecter" FontFamily="JakartaBold" TextColor="{StaticResource ButtonGreen}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

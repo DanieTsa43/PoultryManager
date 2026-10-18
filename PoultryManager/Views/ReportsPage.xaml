@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    11 · Rapports et exportation (onglet Rapports)
+    Bande, période et données à inclure ; génération puis export PDF ou CSV.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.ReportsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:ReportsViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+                <Label Text="Créez d'abord une bande pour générer un rapport." IsVisible="{Binding HasBands, Converter={StaticResource InverseBoolConverter}}" Style="{StaticResource CaptionStyle}" />
+
+                <Border Style="{StaticResource FormCardStyle}" IsVisible="{Binding HasBands}">
+                    <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Bande" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand}" Title="Bande" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Date de début" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Date de fin" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <DatePicker Date="{Binding ToDate}" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        </Grid>
+                        <VerticalStackLayout>
+                            <Label Text="Données à inclure" Style="{StaticResource FieldLabelStyle}" />
+                            <Grid ColumnDefinitions="Auto,*" MinimumHeightRequest="44">
+                                <CheckBox IsChecked="{Binding IncludeCount}" VerticalOptions="Center" SemanticProperties.Description="Effectif" />
+                                <Label Grid.Column="1" Text="Effectif" VerticalOptions="Center" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*" MinimumHeightRequest="44">
+                                <CheckBox IsChecked="{Binding IncludeEggs}" VerticalOptions="Center" SemanticProperties.Description="Production d'œufs" />
+                                <Label Grid.Column="1" Text="Production d'œufs" VerticalOptions="Center" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*" MinimumHeightRequest="44">
+                                <CheckBox IsChecked="{Binding IncludeFeed}" VerticalOptions="Center" SemanticProperties.Description="Alimentation" />
+                                <Label Grid.Column="1" Text="Alimentation" VerticalOptions="Center" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*" MinimumHeightRequest="44">
+                                <CheckBox IsChecked="{Binding IncludeMortality}" VerticalOptions="Center" SemanticProperties.Description="Mortalité" />
+                                <Label Grid.Column="1" Text="Mortalité" VerticalOptions="Center" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*" MinimumHeightRequest="44">
+                                <CheckBox IsChecked="{Binding IncludeLayingRate}" VerticalOptions="Center" SemanticProperties.Description="Taux de ponte" />
+                                <Label Grid.Column="1" Text="Taux de ponte" VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid IsVisible="{Binding HasBands}">
+                    <Button Text="{Binding GenerateButtonText}" Command="{Binding GenerateCommand}" />
+                    <ActivityIndicator Margin="20,0,0,0" WidthRequest="22" HeightRequest="22" HorizontalOptions="Start" VerticalOptions="Center" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" InputTransparent="True" />
+                </Grid>
+
+            <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasReport}">
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="{Binding ReportStatus}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                </HorizontalStackLayout>
+            </Border>
+            <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasError}">
+                <Grid ColumnDefinitions="20,*,Auto" ColumnSpacing="10">
+                    <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding ErrorMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" />
+                    <Label Grid.Column="2" Text="Réessayer" FontFamily="JakartaExtraBold" FontSize="14" TextColor="#8E2F2F" TextDecorations="Underline" VerticalOptions="Center" Padding="8,12">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding RetryCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+            </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding HasReport}">
+                    <Button Text="Exporter en PDF" ImageSource="ic_download.png" Style="{StaticResource SecondaryButtonStyle}" FontSize="15" Command="{Binding ExportPdfCommand}" />
+                    <Button Grid.Column="1" Text="Exporter en CSV" ImageSource="ic_download.png" Style="{StaticResource SecondaryButtonStyle}" FontSize="15" Command="{Binding ExportCsvCommand}" />
+                </Grid>
+                <Label Text="Le fichier s'ouvre dans le menu de partage : e-mail, WhatsApp, Drive ou enregistrement sur l'appareil." IsVisible="{Binding HasReport}" Style="{StaticResource CaptionStyle}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

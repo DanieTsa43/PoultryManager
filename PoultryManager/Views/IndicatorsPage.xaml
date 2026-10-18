@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    08 · Indicateurs de rendement
+    Taux de ponte, aliment par poule, indice de conversion, courbes de production et de mortalité.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.IndicatorsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    xmlns:controls="clr-namespace:PoultryManager.Controls"
+    x:DataType="vm:IndicatorsViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+                <Border Style="{StaticResource FieldStyle}" BackgroundColor="{StaticResource White}" StrokeShape="RoundRectangle 14">
+                    <Picker ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand}" Title="Bande" FontFamily="JakartaBold" SemanticProperties.Description="Bande" />
+                </Border>
+                <HorizontalStackLayout BindableLayout.ItemsSource="{Binding PeriodChips}" Spacing="6">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:OptionChip">
+                            <Border Style="{StaticResource ChipStyle}" SemanticProperties.Description="{Binding Label}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                                        <Setter Property="Stroke" Value="{StaticResource ForestGreen}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" Style="{StaticResource ChipLabelStyle}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                            <Setter Property="FontFamily" Value="JakartaBold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+                <Label Text="{Binding LastDayText}" Style="{StaticResource CaptionStyle}" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="14">
+                        <VerticalStackLayout>
+                            <Label Text="Taux de ponte" Style="{StaticResource TileCaptionStyle}" FontSize="13" />
+                            <Label Text="{Binding LayingRateText}" FontFamily="JakartaExtraBold" FontSize="24" />
+                            <Label Text="{Binding LayingRateDelta}" FontFamily="JakartaBold" FontSize="12" TextColor="{StaticResource ButtonGreen}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="14">
+                        <VerticalStackLayout>
+                            <Label Text="Aliment par poule" Style="{StaticResource TileCaptionStyle}" FontSize="13" />
+                            <Label Text="{Binding FeedPerHenText}" FontFamily="JakartaExtraBold" FontSize="24" />
+                            <Label Text="{Binding FeedPerHenDelta}" FontFamily="JakartaBold" FontSize="12" TextColor="{StaticResource ButtonGreen}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Indice de conversion alimentaire" Style="{StaticResource TileCaptionStyle}" FontSize="13" />
+                            <Label Text="{Binding ConversionCaption}" FontSize="12" TextColor="{StaticResource TextSecondarySmall}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="{Binding ConversionText}" FontFamily="JakartaExtraBold" FontSize="26" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Évolution de la production (œufs par jour)" Style="{StaticResource SectionTitleStyle}" />
+                        <controls:LineChartView Points="{Binding ProductionPoints}" HeightRequest="150" SemanticProperties.Description="Évolution de la production d'œufs" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Évolution de la mortalité" Style="{StaticResource SectionTitleStyle}" />
+                            <Label Grid.Column="1" Text="{Binding MortalityCaption}" Style="{StaticResource CaptionStyle}" />
+                        </Grid>
+                        <controls:BarChartView Points="{Binding MortalityPoints}" BarColor="{StaticResource AlertRed}" HighlightColor="{StaticResource AlertRed}" HeightRequest="130" SemanticProperties.Description="Morts par jour" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

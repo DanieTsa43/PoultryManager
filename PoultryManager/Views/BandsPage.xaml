@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    04 · Gestion des bandes (onglet Bandes)
+    Liste des bandes avec effectif initial / actuel ; bilan, modification et clôture.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.BandsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    x:DataType="vm:BandsViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+            <Label Grid.Column="2" Text="{Binding CountText}" Style="{StaticResource CaptionStyle}" VerticalOptions="Center" />
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" Margin="16,0" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.EmptyView>
+                <Border Margin="0,8" Padding="20,24" BackgroundColor="{StaticResource PaleGreen}" Stroke="{StaticResource TextSecondary}" StrokeDashArray="4,3" StrokeShape="RoundRectangle 20">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Aucune bande" FontFamily="JakartaExtraBold" FontSize="16" HorizontalTextAlignment="Center" />
+                        <Label Text="Créez une bande pour enregistrer son effectif initial et commencer les suivis." Style="{StaticResource CaptionStyle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="items:BandItem">
+                    <Border Style="{StaticResource CardStyle}" Padding="14">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenSummaryCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Name}" FontFamily="JakartaExtraBold" FontSize="16" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource CaptionStyle}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="1" Style="{StaticResource BadgeStyle}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsClosed}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                            <Setter Property="Stroke" Value="{StaticResource TextSecondary}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding StatusText}" Style="{StaticResource BadgeLabelStyle}" />
+                                </Border>
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Border BackgroundColor="{StaticResource PaleGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12,8">
+                                    <VerticalStackLayout>
+                                        <Label Text="Effectif initial" Style="{StaticResource TileCaptionStyle}" />
+                                        <Label Text="{Binding InitialCountText}" FontFamily="JakartaExtraBold" FontSize="17" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="1" BackgroundColor="{StaticResource PaleGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12,8">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding CurrentCountLabel}" Style="{StaticResource TileCaptionStyle}" />
+                                        <Label Text="{Binding CurrentCountText}" FontFamily="JakartaExtraBold" FontSize="17" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                <Button Text="Bilan" Style="{StaticResource SmallPrimaryButtonStyle}" Command="{Binding OpenSummaryCommand}" />
+                                <Button Grid.Column="1" Text="Modifier" Style="{StaticResource SmallSecondaryButtonStyle}" Command="{Binding EditCommand}" />
+                                <Button Grid.Column="2" Text="Clôturer" Style="{StaticResource SmallDangerButtonStyle}" Command="{Binding CloseCommand}" IsVisible="{Binding IsActive}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="8" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <Button
+            Grid.Row="2"
+            Margin="16,8,16,14"
+            Text="Nouvelle bande"
+            ImageSource="ic_plus_white.png"
+            Command="{Binding NewBandCommand}" />
+    </Grid>
+
+</base:ViewModelPage>

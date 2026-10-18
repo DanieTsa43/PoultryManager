@@ -1,0 +1,8 @@
+# Normalisation automatique des fins de ligne
+* text=auto
+
+# Fichiers binaires
+*.png binary
+*.jpg binary
+*.ttf binary
+*.pdf binary

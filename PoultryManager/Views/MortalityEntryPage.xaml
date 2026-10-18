@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    07 · Mortalité
+    Saisie des morts du jour, effectif restant calculé, dernières saisies modifiables.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.MortalityEntryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    x:DataType="vm:MortalityEntryViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+            <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                </HorizontalStackLayout>
+            </Border>
+            <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasFormError}">
+                <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                    <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding FormError}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <!-- Aucune bande active -->
+            <Border IsVisible="{Binding HasBands, Converter={StaticResource InverseBoolConverter}}" Padding="20" BackgroundColor="{StaticResource PaleGreen}" Stroke="{StaticResource TextSecondary}" StrokeDashArray="4,3" StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Aucune bande active" FontFamily="JakartaExtraBold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Button Text="Créer une bande" HorizontalOptions="Center" HeightRequest="44" CornerRadius="12" FontSize="14" Command="{Binding CreateBandCommand}" />
+                </VerticalStackLayout>
+            </Border>
+                <Border Style="{StaticResource FormCardStyle}" IsVisible="{Binding HasBands}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Date" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <DatePicker Date="{Binding Date}" MaximumDate="{Binding MaximumDate}" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Bande" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand}" Title="Bande" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        </Grid>
+                        <Label Text="{Binding ExistingRecordText}" IsVisible="{Binding HasExistingRecord}" Style="{StaticResource CaptionStyle}" FontSize="12" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Nombre de morts" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasDeathsError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding DeathsText}" Placeholder="0" Keyboard="Numeric" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding DeathsError}" IsVisible="{Binding HasDeathsError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Cause présumée" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Causes}" SelectedItem="{Binding Cause}" Title="Cause présumée" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        </Grid>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Observations" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Editor Text="{Binding Notes}" Placeholder="Symptômes, circonstances…" AutoSize="TextChanges" MinimumHeightRequest="70" />
+                </Border>
+            </VerticalStackLayout>
+                        <Border Style="{StaticResource CalcCardStyle}">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                <VerticalStackLayout VerticalOptions="Center">
+                                    <Label Text="Effectif restant après saisie" Style="{StaticResource FieldLabelStyle}" />
+                                    <Label Text="{Binding RemainingFormula}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="1" Text="{Binding RemainingCountText}" FontFamily="JakartaExtraBold" FontSize="22" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+                <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsVisible="{Binding HasBands}" />
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasRecentItems}">
+                    <Label Text="Dernières saisies" Style="{StaticResource SectionTitleStyle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentItems}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="items:MortalityItem">
+                                <Border Style="{StaticResource CardStyle}" Padding="14,6,6,6" StrokeShape="RoundRectangle 14">
+                                    <Grid ColumnDefinitions="*,44,44" ColumnSpacing="4">
+                                        <VerticalStackLayout VerticalOptions="Center">
+                                            <Label Text="{Binding Title}" FontFamily="JakartaBold" FontSize="14" />
+                                            <Label Text="{Binding Subtitle}" Style="{StaticResource CaptionStyle}" />
+                                        </VerticalStackLayout>
+                                        <ImageButton Grid.Column="1" Source="ic_edit.png" Style="{StaticResource IconButtonStyle}" Command="{Binding EditCommand}" SemanticProperties.Description="{Binding EditDescription}" />
+                                        <ImageButton Grid.Column="2" Source="ic_trash.png" Style="{StaticResource IconButtonStyle}" Command="{Binding DeleteCommand}" SemanticProperties.Description="{Binding DeleteDescription}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

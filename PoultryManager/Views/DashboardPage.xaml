@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    03 · Tableau de bord (onglet Accueil)
+    Indicateurs du jour de la bande choisie, courbe des 7 derniers jours, raccourcis de saisie.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:controls="clr-namespace:PoultryManager.Controls"
+    x:DataType="vm:DashboardViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,20" Spacing="12">
+
+            <!-- En-tête : avatar, salutation, notifications -->
+            <Grid ColumnDefinitions="48,*,44" ColumnSpacing="12">
+                <Border
+                    WidthRequest="48"
+                    HeightRequest="48"
+                    BackgroundColor="{StaticResource ForestGreen}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 24"
+                    SemanticProperties.Description="Profil">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Text="{Binding Initials}" FontFamily="JakartaBold" FontSize="16" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                    <Label Text="{Binding Greeting}" Style="{StaticResource ScreenTitleStyle}" SemanticProperties.HeadingLevel="Level1" />
+                    <Label Text="{Binding FarmName}" Style="{StaticResource CaptionStyle}" />
+                </VerticalStackLayout>
+                <Border Grid.Column="2" WidthRequest="44" HeightRequest="44" BackgroundColor="{StaticResource White}" Stroke="{StaticResource BorderColor}" StrokeShape="RoundRectangle 14">
+                    <ImageButton Source="ic_bell.png" Padding="11" BackgroundColor="Transparent" Command="{Binding ShowNotificationsCommand}" SemanticProperties.Description="Notifications" />
+                </Border>
+            </Grid>
+
+            <!-- Aucune bande : invitation à créer la première -->
+            <Border
+                IsVisible="{Binding HasNoBand}"
+                Padding="20,24"
+                BackgroundColor="{StaticResource PaleGreen}"
+                Stroke="{StaticResource TextSecondary}"
+                StrokeDashArray="4,3"
+                StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout Spacing="8">
+                    <Image Source="ic_egg_big.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" />
+                    <Label Text="Aucune bande active" FontFamily="JakartaExtraBold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Label Text="Créez votre première bande pour commencer à suivre l'effectif, la ponte, l'aliment et la mortalité." Style="{StaticResource CaptionStyle}" HorizontalTextAlignment="Center" />
+                    <Button Margin="0,6,0,0" Text="Créer une bande" HorizontalOptions="Center" HeightRequest="44" CornerRadius="12" FontSize="14" Command="{Binding CreateBandCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout IsVisible="{Binding HasBand}" Spacing="12">
+
+                <!-- Bande affichée -->
+                <Border Style="{StaticResource FieldStyle}" BackgroundColor="{StaticResource White}" StrokeShape="RoundRectangle 14">
+                    <Picker ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand}" Title="Bande affichée" FontFamily="JakartaBold" SemanticProperties.Description="Bande affichée" />
+                </Border>
+                <Label Margin="4,-6,0,0" Text="{Binding TodayText}" Style="{StaticResource CaptionStyle}" />
+
+                <!-- Rappel de saisie -->
+                <Border IsVisible="{Binding HasReminder}" BackgroundColor="{StaticResource ReminderBackground}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="14,10">
+                    <Label Text="{Binding ReminderText}" FontFamily="JakartaSemiBold" FontSize="13" TextColor="{StaticResource ReminderText}" />
+                </Border>
+
+                <!-- Indicateurs du jour -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource StatCardStyle}" SemanticProperties.Description="Effectif actuel, ouvrir les bandes">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenBandsCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="40,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource IconTileStyle}" BackgroundColor="{StaticResource SageGreen}">
+                            <Image Source="ic_layers.png" WidthRequest="20" HeightRequest="20" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Effectif actuel" Style="{StaticResource TileCaptionStyle}" />
+                            <Label Text="{Binding CurrentCountText}" Style="{StaticResource TileValueStyle}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource StatCardStyle}" SemanticProperties.Description="Œufs du jour, saisir la production">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddEggsCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="40,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource IconTileStyle}" BackgroundColor="{StaticResource EggYellow}">
+                            <Image Source="ic_egg.png" WidthRequest="20" HeightRequest="20" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Œufs du jour" Style="{StaticResource TileCaptionStyle}" />
+                            <Label Text="{Binding EggsTodayText}" Style="{StaticResource TileValueStyle}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource StatCardStyle}" SemanticProperties.Description="Aliment du jour, saisir la distribution">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddFeedCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="40,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource IconTileStyle}" BackgroundColor="{StaticResource SageGreen}">
+                            <Image Source="ic_feed.png" WidthRequest="20" HeightRequest="20" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Aliment du jour" Style="{StaticResource TileCaptionStyle}" />
+                            <Label Text="{Binding FeedTodayText}" Style="{StaticResource TileValueStyle}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource StatCardStyle}" SemanticProperties.Description="Mortalité du jour, saisir la mortalité">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddMortalityCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="40,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource IconTileStyle}" BackgroundColor="{StaticResource ErrorBackground}">
+                            <Image Source="ic_heart.png" WidthRequest="20" HeightRequest="20" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Mortalité du jour" Style="{StaticResource TileCaptionStyle}" />
+                            <Label Text="{Binding DeathsTodayText}" Style="{StaticResource TileValueStyle}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+                </Grid>
+
+                <!-- Taux de ponte du jour -->
+                <Border BackgroundColor="{StaticResource ForestGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="16,14" SemanticProperties.Description="Taux de ponte du jour, ouvrir les indicateurs">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenIndicatorsCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="24,*,Auto" ColumnSpacing="12">
+                        <Image Source="ic_chart_white.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Taux de ponte du jour" FontSize="12" TextColor="{StaticResource SageGreen}" />
+                            <Label Text="{Binding LayingRateText}" FontFamily="JakartaExtraBold" FontSize="24" TextColor="{StaticResource White}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="2" IsVisible="{Binding HasLayingRateDelta}" BackgroundColor="{StaticResource ButtonGreen}" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="10,4" VerticalOptions="Center">
+                            <Label Text="{Binding LayingRateDeltaText}" FontFamily="JakartaBold" FontSize="12" TextColor="{StaticResource White}" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Production des 7 derniers jours -->
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <VerticalStackLayout Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Production des 7 derniers jours" Style="{StaticResource SectionTitleStyle}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Bilan" Style="{StaticResource LinkLabelStyle}" FontSize="13" Padding="12,12,0,12" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenSummaryCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                        <controls:LineChartView Points="{Binding ProductionPoints}" HeightRequest="140" SemanticProperties.Description="Œufs collectés par jour sur 7 jours" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Ajouter un suivi -->
+                <Label Text="Ajouter un suivi" Style="{StaticResource SectionTitleStyle}" Margin="0,4,0,0" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button Text="Œufs" ImageSource="ic_plus_white.png" FontSize="14" Command="{Binding AddEggsCommand}" />
+                    <Button Grid.Column="1" Text="Aliment" ImageSource="ic_plus_white.png" FontSize="14" Command="{Binding AddFeedCommand}" />
+                    <Button Grid.Column="2" Text="Mortalité" ImageSource="ic_plus_white.png" FontSize="14" Padding="6,0" Command="{Binding AddMortalityCommand}" />
+                </Grid>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</base:ViewModelPage>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    04b · Nouvelle bande / Modifier la bande
+    Nom, souche, date de démarrage, effectif initial, âge à l'arrivée, observations.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.BandEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:BandEditViewModel"
+    Title="{Binding Title}"
+    Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding CancelCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,16" Spacing="14">
+                <Border Style="{StaticResource FormCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Nom ou identifiant de la bande" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasNameError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding Name}" Placeholder="{Binding NamePlaceholder}" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding NameError}" IsVisible="{Binding HasNameError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Type ou souche" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Strains}" SelectedItem="{Binding Strain}" Title="Type ou souche" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Date de démarrage" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasStartDateError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <DatePicker Date="{Binding StartDate}" MaximumDate="{Binding MaximumDate}" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding StartDateError}" IsVisible="{Binding HasStartDateError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Effectif initial" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasInitialCountError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding InitialCountText}" Placeholder="Ex. 1 600" Keyboard="Numeric" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding InitialCountError}" IsVisible="{Binding HasInitialCountError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+                        </Grid>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Âge à l'arrivée, en semaines" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasAgeError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding AgeText}" Placeholder="Ex. 18" Keyboard="Numeric" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding AgeError}" IsVisible="{Binding HasAgeError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Observations" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Editor Text="{Binding Notes}" Placeholder="Fournisseur, bâtiment, remarques…" AutoSize="TextChanges" MinimumHeightRequest="70" />
+                </Border>
+            </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+                <Label Text="L'effectif actuel est calculé automatiquement : effectif initial − mortalité cumulée." Style="{StaticResource CaptionStyle}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,2*" ColumnSpacing="10" Padding="16,8,16,16">
+            <Button Text="Annuler" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Text="{Binding SubmitText}" Command="{Binding SaveCommand}" />
+        </Grid>
+    </Grid>
+
+</base:ViewModelPage>

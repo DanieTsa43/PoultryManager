@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    05 · Production d'œufs
+    Saisie quotidienne des œufs collectés ; calcul du taux de ponte à l'enregistrement.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.EggEntryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    x:DataType="vm:EggEntryViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="12">
+            <Border Style="{StaticResource SuccessBannerStyle}" IsVisible="{Binding HasSuccess}">
+                <HorizontalStackLayout Spacing="10">
+                    <Image Source="ic_check.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="{Binding SuccessMessage}" FontFamily="JakartaBold" FontSize="14" TextColor="{StaticResource ForestGreen}" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                </HorizontalStackLayout>
+            </Border>
+            <Border Style="{StaticResource ErrorBannerStyle}" IsVisible="{Binding HasFormError}">
+                <Grid ColumnDefinitions="20,*" ColumnSpacing="10">
+                    <Image Source="ic_alert.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding FormError}" FontFamily="JakartaBold" FontSize="14" TextColor="#8E2F2F" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <!-- Aucune bande active -->
+            <Border IsVisible="{Binding HasBands, Converter={StaticResource InverseBoolConverter}}" Padding="20" BackgroundColor="{StaticResource PaleGreen}" Stroke="{StaticResource TextSecondary}" StrokeDashArray="4,3" StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Aucune bande active" FontFamily="JakartaExtraBold" FontSize="16" HorizontalTextAlignment="Center" />
+                    <Button Text="Créer une bande" HorizontalOptions="Center" HeightRequest="44" CornerRadius="12" FontSize="14" Command="{Binding CreateBandCommand}" />
+                </VerticalStackLayout>
+            </Border>
+                <Border Style="{StaticResource FormCardStyle}" IsVisible="{Binding HasBands}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Date" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <DatePicker Date="{Binding Date}" MaximumDate="{Binding MaximumDate}" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Bande" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand}" Title="Bande" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        </Grid>
+                        <Label Text="{Binding ExistingRecordText}" IsVisible="{Binding HasExistingRecord}" Style="{StaticResource CaptionStyle}" FontSize="12" />
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Nombre d'œufs collectés" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}" HeightRequest="56">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasEggsError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding EggsText}" Placeholder="0" Keyboard="Numeric" FontFamily="JakartaExtraBold" FontSize="22" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding EggsError}" IsVisible="{Binding HasEggsError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Cassés ou impropres" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasBrokenError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Text="{Binding BrokenText}" Placeholder="0" Keyboard="Numeric" VerticalOptions="Center" />
+                </Border>
+                <Label Text="{Binding BrokenError}" IsVisible="{Binding HasBrokenError}" Style="{StaticResource ErrorTextStyle}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Catégorie" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Picker ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Title="Catégorie" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+                        </Grid>
+            <VerticalStackLayout Spacing="6">
+                <Label Style="{StaticResource FieldLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Observations" /> <Span Text="(facultatif)" FontFamily="JakartaMedium" TextColor="{StaticResource TextSecondarySmall}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Border Style="{StaticResource FieldStyle}">
+                    <Editor Text="{Binding Notes}" Placeholder="Remarques sur la collecte…" AutoSize="TextChanges" MinimumHeightRequest="70" />
+                </Border>
+            </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+                <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsVisible="{Binding HasBands}" />
+                <Label Text="Voir l'historique des collectes" Style="{StaticResource LinkLabelStyle}" HorizontalOptions="Center" Padding="12">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenHistoryCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</base:ViewModelPage>

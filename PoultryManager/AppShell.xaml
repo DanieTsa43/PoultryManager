@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Navigation de l'application (voir docs/PoultryManager_Arborescence.pdf).
+    · Écrans d'accès : Bienvenue (racine), Connexion et Inscription (empilés).
+    · Après connexion : barre de navigation à 5 onglets (Accueil, Bandes, Suivi, Rapports, Plus).
+    · Les autres écrans sont empilés depuis les onglets (routes enregistrées dans AppShell.xaml.cs).
+-->
+<Shell
+    x:Class="PoultryManager.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:PoultryManager.Views"
+    Title="PoultryManager"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarBackgroundColor="{StaticResource White}"
+    Shell.TabBarForegroundColor="{StaticResource ForestGreen}"
+    Shell.TabBarTitleColor="{StaticResource ForestGreen}"
+    Shell.TabBarUnselectedColor="{StaticResource TextSecondarySmall}">
+
+    <!-- 00 · Bienvenue : premier écran affiché au lancement -->
+    <ShellContent
+        Route="welcome"
+        ContentTemplate="{DataTemplate views:WelcomePage}" />
+
+    <!-- Barre de navigation principale (après connexion) -->
+    <TabBar Route="main">
+        <Tab Title="Accueil" Icon="tab_home.png" Route="dashboard">
+            <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
+        </Tab>
+        <Tab Title="Bandes" Icon="tab_bands.png" Route="bands">
+            <ShellContent ContentTemplate="{DataTemplate views:BandsPage}" />
+        </Tab>
+        <Tab Title="Suivi" Icon="tab_activity.png" Route="history">
+            <ShellContent ContentTemplate="{DataTemplate views:HistoryPage}" />
+        </Tab>
+        <Tab Title="Rapports" Icon="tab_reports.png" Route="reports">
+            <ShellContent ContentTemplate="{DataTemplate views:ReportsPage}" />
+        </Tab>
+        <Tab Title="Plus" Icon="tab_more.png" Route="settings">
+            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>

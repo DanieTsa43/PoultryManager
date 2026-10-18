@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    09 · Historique des suivis (onglet Suivi)
+    Journées saisies par bande et par période ; modification et suppression.
+-->
+<base:ViewModelPage
+    x:Class="PoultryManager.Views.HistoryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:PoultryManager.Views.Base"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    xmlns:items="clr-namespace:PoultryManager.ViewModels.Items"
+    x:DataType="vm:HistoryViewModel"
+    Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="44,*,Auto" Style="{StaticResource HeaderGridStyle}">
+            <ImageButton
+                Source="icon_back.png"
+                Style="{StaticResource IconButtonStyle}"
+                Command="{Binding GoBackCommand}"
+                SemanticProperties.Description="Retour" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                Style="{StaticResource ScreenTitleStyle}"
+                VerticalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+            <Label Grid.Column="2" Text="Indicateurs" Style="{StaticResource LinkLabelStyle}" FontSize="13" Padding="12,12,0,12" VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenIndicatorsCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+
+        <!-- Filtre par bande -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="16,0">
+            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding BandChips}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:OptionChip">
+                            <Border Style="{StaticResource ChipStyle}" SemanticProperties.Description="{Binding Label}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                                        <Setter Property="Stroke" Value="{StaticResource ForestGreen}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" Style="{StaticResource ChipLabelStyle}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                            <Setter Property="FontFamily" Value="JakartaBold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Filtre par période -->
+        <VerticalStackLayout Grid.Row="2" Padding="16,10,16,6" Spacing="6">
+            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding PeriodChips}" Spacing="6">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:OptionChip">
+                            <Border Style="{StaticResource ChipStyle}" SemanticProperties.Description="{Binding Label}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource ForestGreen}" />
+                                        <Setter Property="Stroke" Value="{StaticResource ForestGreen}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" Style="{StaticResource ChipLabelStyle}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                            <Setter Property="FontFamily" Value="JakartaBold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="8">
+                <Image Source="ic_calendar.png" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
+                <Label Text="{Binding PeriodText}" Style="{StaticResource CaptionStyle}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="3" ItemsSource="{Binding Items}" Margin="16,0" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.EmptyView>
+                <Border Margin="0,8" Padding="20,24" BackgroundColor="{StaticResource PaleGreen}" Stroke="{StaticResource TextSecondary}" StrokeDashArray="4,3" StrokeShape="RoundRectangle 20">
+                    <VerticalStackLayout Spacing="8">
+                        <Image Source="ic_egg_big.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" />
+                        <Label Text="Aucun suivi sur cette période" FontFamily="JakartaExtraBold" FontSize="16" HorizontalTextAlignment="Center" />
+                        <Label Text="Ajoutez la première saisie ou élargissez la période." Style="{StaticResource CaptionStyle}" HorizontalTextAlignment="Center" />
+                        <Button Margin="0,4,0,0" Text="Ajouter un suivi" HorizontalOptions="Center" HeightRequest="44" CornerRadius="12" FontSize="14" Command="{Binding AddEntryCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="items:HistoryDayItem">
+                    <Border Style="{StaticResource CardStyle}" Padding="14,12">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsLatest}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource ButtonGreen}" />
+                                <Setter Property="StrokeThickness" Value="2" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding DateText}" FontFamily="JakartaExtraBold" FontSize="15" VerticalOptions="Center" />
+                                <Border Grid.Column="1" Style="{StaticResource BadgeStyle}">
+                                    <Label Text="{Binding BandName}" Style="{StaticResource BadgeLabelStyle}" />
+                                </Border>
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="Œufs" FontSize="11" TextColor="{StaticResource TextSecondarySmall}" />
+                                    <Label Text="{Binding EggsText}" FontFamily="JakartaExtraBold" FontSize="15" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1">
+                                    <Label Text="Aliment" FontSize="11" TextColor="{StaticResource TextSecondarySmall}" />
+                                    <Label Text="{Binding FeedText}" FontFamily="JakartaExtraBold" FontSize="15" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="2">
+                                    <Label Text="Morts" FontSize="11" TextColor="{StaticResource TextSecondarySmall}" />
+                                    <Label Text="{Binding DeathsText}" FontFamily="JakartaExtraBold" FontSize="15" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="3">
+                                    <Label Text="Ponte" FontSize="11" TextColor="{StaticResource TextSecondarySmall}" />
+                                    <Label Text="{Binding LayingRateText}" FontFamily="JakartaExtraBold" FontSize="15" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Text="Modifier" Style="{StaticResource SmallSecondaryButtonStyle}" Command="{Binding EditCommand}" />
+                                <Button Grid.Column="1" Text="Supprimer" Style="{StaticResource SmallDangerButtonStyle}" Command="{Binding DeleteCommand}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="12" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
+
+</base:ViewModelPage>

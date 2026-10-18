@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    01 · Connexion
+    Fond clair avec feuillages, logo, formulaire identifiant / mot de passe.
+-->
+<ContentPage
+    x:Class="PoultryManager.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PoultryManager.ViewModels"
+    x:DataType="vm:LoginViewModel"
+    Title="{Binding Title}"
+    BackgroundColor="#F3F7F4">
+
+    <Grid>
+        <!-- Fond décoratif -->
+        <Image Source="connexion_fond.jpg" Aspect="AspectFill" InputTransparent="True" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="20,0,20,28">
+
+                <!-- Logo et nom -->
+                <Image
+                    Source="logo.png"
+                    Margin="0,62,0,0"
+                    WidthRequest="114"
+                    HeightRequest="114"
+                    HorizontalOptions="Center"
+                    SemanticProperties.Description="Logo PoultryManager" />
+
+                <Label
+                    Margin="10,8,0,0"
+                    Text="PoultryManager"
+                    FontFamily="JakartaSemiBold"
+                    FontSize="36" />
+
+                <!-- Titre -->
+                <Label
+                    Margin="10,34,0,0"
+                    Text="Bienvenue"
+                    FontFamily="JakartaBold"
+                    FontSize="36"
+                    SemanticProperties.HeadingLevel="Level1" />
+
+                <Label
+                    Margin="10,2,0,0"
+                    Text="Connectez-vous à votre compte"
+                    FontFamily="JakartaRegular"
+                    FontSize="19"
+                    TextColor="{StaticResource ButtonGreen}" />
+
+                <!-- Champ : adresse e-mail ou nom d'utilisateur -->
+                <Border
+                    Margin="0,31,0,0"
+                    HeightRequest="62"
+                    Style="{StaticResource AccessFieldStyle}">
+                    <Border.Shadow>
+                        <Shadow Brush="#17392C" Offset="0,2" Radius="12" Opacity="0.08" />
+                    </Border.Shadow>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasIdentifierError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+
+                    <Grid ColumnDefinitions="24,*" ColumnSpacing="14">
+                        <Image
+                            Source="icon_user.png"
+                            WidthRequest="24"
+                            HeightRequest="24"
+                            VerticalOptions="Center" />
+                        <Entry
+                            Grid.Column="1"
+                            Text="{Binding Identifier}"
+                            Placeholder="Adresse e-mail ou nom d'utilisateur"
+                            Keyboard="Email"
+                            ReturnType="Next"
+                            FontFamily="JakartaMedium"
+                            VerticalOptions="Center"
+                            SemanticProperties.Description="Adresse e-mail ou nom d'utilisateur" />
+                    </Grid>
+                </Border>
+
+                <!-- Champ : mot de passe -->
+                <Border
+                    Margin="0,18,0,0"
+                    HeightRequest="57"
+                    BackgroundColor="{StaticResource SageGreen}"
+                    Padding="18,0,4,0"
+                    Style="{StaticResource AccessFieldStyle}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasPasswordError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource AlertRed}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+
+                    <Grid ColumnDefinitions="24,*,44" ColumnSpacing="14">
+                        <Image
+                            Source="icon_lock.png"
+                            WidthRequest="24"
+                            HeightRequest="24"
+                            VerticalOptions="Center" />
+                        <Entry
+                            Grid.Column="1"
+                            Text="{Binding Password}"
+                            Placeholder="Mot de passe"
+                            IsPassword="{Binding IsPasswordHidden}"
+                            ReturnType="Go"
+                            ReturnCommand="{Binding LoginCommand}"
+                            FontFamily="JakartaMedium"
+                            FontSize="16"
+                            VerticalOptions="Center"
+                            SemanticProperties.Description="Mot de passe" />
+
+                        <!-- Œil : afficher / masquer le mot de passe -->
+                        <ImageButton
+                            Grid.Column="2"
+                            Source="icon_eye.png"
+                            Style="{StaticResource IconButtonStyle}"
+                            Command="{Binding TogglePasswordVisibilityCommand}"
+                            IsVisible="{Binding IsPasswordHidden}"
+                            VerticalOptions="Center"
+                            SemanticProperties.Description="Afficher le mot de passe" />
+                        <ImageButton
+                            Grid.Column="2"
+                            Source="icon_eye_off.png"
+                            Style="{StaticResource IconButtonStyle}"
+                            Command="{Binding TogglePasswordVisibilityCommand}"
+                            IsVisible="{Binding IsPasswordVisible}"
+                            VerticalOptions="Center"
+                            SemanticProperties.Description="Masquer le mot de passe" />
+                    </Grid>
+                </Border>
+
+                <!-- Message d'erreur -->
+                <Label
+                    Margin="6,10,0,0"
+                    Text="{Binding ErrorMessage}"
+                    IsVisible="{Binding HasError}"
+                    Style="{StaticResource ErrorTextStyle}" />
+
+                <!-- Se souvenir de moi / Mot de passe oublié -->
+                <Grid
+                    Margin="0,14,0,0"
+                    ColumnDefinitions="Auto,*,Auto"
+                    MinimumHeightRequest="44">
+                    <CheckBox
+                        IsChecked="{Binding RememberMe}"
+                        VerticalOptions="Center"
+                        SemanticProperties.Description="Se souvenir de moi" />
+                    <Label
+                        Grid.Column="1"
+                        Text="Se souvenir de moi"
+                        FontSize="13"
+                        VerticalOptions="Center"
+                        Padding="0,12">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleRememberMeCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label
+                        Grid.Column="2"
+                        Text="Mot de passe oublié ?"
+                        FontFamily="JakartaSemiBold"
+                        FontSize="13"
+                        VerticalOptions="Center"
+                        Padding="8,12,0,12">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <!-- Bouton principal (désactivé + indicateur pendant la connexion) -->
+                <Grid Margin="0,36,0,0">
+                    <Button
+                        Text="{Binding LoginButtonText}"
+                        Style="{StaticResource AccessButtonStyle}"
+                        Command="{Binding LoginCommand}" />
+                    <ActivityIndicator
+                        Margin="22,0,0,0"
+                        WidthRequest="22"
+                        HeightRequest="22"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        IsRunning="{Binding IsBusy}"
+                        IsVisible="{Binding IsBusy}"
+                        InputTransparent="True" />
+                </Grid>
+
+                <!-- Lien vers l'inscription -->
+                <Label
+                    Margin="0,24,0,0"
+                    Padding="0,12"
+                    HorizontalTextAlignment="Center"
+                    FontSize="15"
+                    TextColor="{StaticResource TextMuted}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Pas encore de compte ? " FontFamily="JakartaMedium" />
+                            <Span Text="Créer un compte" FontFamily="JakartaBold" TextColor="{StaticResource TextPrimary}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>
