@@ -19,8 +19,8 @@ public partial class WelcomeViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Appelé à l'affichage de l'écran : prépare la base de données et, si une session
-    /// a été mémorisée (« Se souvenir de moi »), ouvre directement le tableau de bord.
+    /// Appelé à l'affichage de l'écran : si une session a été mémorisée (« Se souvenir de moi »),
+    /// la rouvre auprès du serveur et ouvre directement le tableau de bord.
     /// </summary>
     [RelayCommand]
     private async Task InitializeAsync()

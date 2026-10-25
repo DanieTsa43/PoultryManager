@@ -16,7 +16,7 @@
 		<ApplicationTitle>PoultryManager</ApplicationTitle>
 		<ApplicationId>com.poultrymanager.app</ApplicationId>
 		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
-		<ApplicationVersion>4</ApplicationVersion>
+		<ApplicationVersion>5</ApplicationVersion>
 
 		<!-- Windows : application non empaquetée (lancement direct depuis Visual Studio). -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -50,9 +50,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<!-- Base de données locale SQLite -->
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
 	</ItemGroup>
 
 </Project>

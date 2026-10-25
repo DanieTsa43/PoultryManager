@@ -1,10 +1,13 @@
-using PoultryManager.Models;
+using Microsoft.EntityFrameworkCore;
+using PoultryManager.Api.Domain;
+using PoultryManager.Api.Services;
 
-namespace PoultryManager.Data;
+namespace PoultryManager.Api.Data;
 
 /// <summary>
-/// Génère le compte et les données de démonstration (fictives) de la maquette :
-/// Jean Dupont · Ferme des Ailes, 3 bandes actives et 1 bande clôturée.
+/// Compte et données de démonstration (fictives) : Jean Dupont · Ferme des Ailes,
+/// 3 bandes actives et 1 bande clôturée. Créés au premier démarrage de l'API si la base est vide
+/// et si « Seed:DemoData » vaut true (activé dans appsettings.Development.json).
 /// Les dates sont calculées par rapport à aujourd'hui pour que le tableau de bord soit toujours renseigné.
 /// </summary>
 public static class DemoDataSeeder
@@ -13,21 +16,9 @@ public static class DemoDataSeeder
     public const string DemoUserName = "jean.dupont";
     public const string DemoPassword = "Poultry2025";
 
-    /// <summary>Compte de démonstration (sans empreinte de mot de passe : calculée par l'appelant).</summary>
-    public static User CreateDemoUser(DateTime now) => new()
-    {
-        FullName = "Jean Dupont",
-        FarmName = "Ferme des Ailes",
-        Email = DemoEmail,
-        UserName = DemoUserName,
-        Phone = string.Empty,
-        CreatedAt = now
-    };
+    private sealed record DemoBand(string Name, string Strain, int DaysAgo, int InitialCount, int AgeWeeks, int? ClosedDaysAgo, int Seed);
 
-    /// <summary>Définition d'une bande de démonstration.</summary>
-    public sealed record DemoBand(string Name, string Strain, int DaysAgo, int InitialCount, int AgeWeeks, int? ClosedDaysAgo, int Seed);
-
-    public static readonly IReadOnlyList<DemoBand> Bands =
+    private static readonly IReadOnlyList<DemoBand> Bands =
     [
         new("Bande 1", "Souche légère", 47, 1800, 18, null, 11),
         new("Bande 2", "Souche mi-lourde", 95, 1500, 18, null, 23),
@@ -35,28 +26,53 @@ public static class DemoDataSeeder
         new("Bande 4", "Souche mi-lourde", 560, 1500, 18, 140, 41)
     ];
 
-    public static Band CreateBand(DemoBand demo, int userId, DateTime today) => new()
+    public static async Task SeedAsync(AppDbContext db)
     {
-        UserId = userId,
-        Name = demo.Name,
-        Strain = demo.Strain,
-        StartDate = today.Date.AddDays(-demo.DaysAgo),
-        InitialCount = demo.InitialCount,
-        AgeAtArrivalWeeks = demo.AgeWeeks,
-        Notes = "Données de démonstration.",
-        IsClosed = demo.ClosedDaysAgo.HasValue,
-        ClosedDate = demo.ClosedDaysAgo.HasValue ? today.Date.AddDays(-demo.ClosedDaysAgo.Value) : null
-    };
+        if (await db.Users.AnyAsync())
+        {
+            return;
+        }
+
+        var today = FarmRules.Today;
+        var (hash, salt) = PasswordHasher.Hash(DemoPassword);
+        var user = new User
+        {
+            FullName = "Jean Dupont",
+            FarmName = "Ferme des Ailes",
+            Email = DemoEmail,
+            UserName = DemoUserName,
+            Phone = string.Empty,
+            PasswordHash = hash,
+            PasswordSalt = salt,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        foreach (var demo in Bands)
+        {
+            var band = new Band
+            {
+                Name = demo.Name,
+                Strain = demo.Strain,
+                StartDate = today.AddDays(-demo.DaysAgo),
+                InitialCount = demo.InitialCount,
+                AgeAtArrivalWeeks = demo.AgeWeeks,
+                Notes = "Données de démonstration.",
+                IsClosed = demo.ClosedDaysAgo.HasValue,
+                ClosedDate = demo.ClosedDaysAgo.HasValue ? today.AddDays(-demo.ClosedDaysAgo.Value) : null
+            };
+
+            FillRecords(band, demo.Seed, today);
+            user.Bands.Add(band);
+        }
+
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+    }
 
     /// <summary>Saisies quotidiennes d'une bande, du démarrage à la clôture (ou à aujourd'hui).</summary>
-    public static (List<EggRecord> Eggs, List<FeedRecord> Feeds, List<MortalityRecord> Mortality) CreateRecords(
-        Band band, int seed, DateTime today)
+    private static void FillRecords(Band band, int seed, DateTime today)
     {
         var random = new Random(seed);
-        var eggs = new List<EggRecord>();
-        var feeds = new List<FeedRecord>();
-        var mortality = new List<MortalityRecord>();
-
         var end = band.IsClosed && band.ClosedDate.HasValue ? band.ClosedDate.Value.Date : today.Date;
         var count = band.InitialCount;
 
@@ -72,9 +88,8 @@ public static class DemoDataSeeder
 
             if (deaths > 0)
             {
-                mortality.Add(new MortalityRecord
+                band.MortalityRecords.Add(new MortalityRecord
                 {
-                    BandId = band.Id,
                     Date = day,
                     Deaths = deaths,
                     Cause = random.NextDouble() < 0.7 ? "Inconnue" : random.NextDouble() < 0.6 ? "Maladie" : "Chaleur",
@@ -85,9 +100,8 @@ public static class DemoDataSeeder
             // Ponte : montée en ponte sur 7 semaines puis plateau et lente décroissance.
             var rate = Math.Clamp(LayingCurve(index) + (random.NextDouble() - 0.5) * 1.6, 0, 96);
             var collected = (int)Math.Round(average * rate / 100);
-            eggs.Add(new EggRecord
+            band.EggRecords.Add(new EggRecord
             {
-                BandId = band.Id,
                 Date = day,
                 EggsCollected = collected,
                 BrokenEggs = (int)Math.Round(collected * (0.008 + random.NextDouble() * 0.006)),
@@ -97,9 +111,8 @@ public static class DemoDataSeeder
 
             // Aliment : de 95 g à 118 g par poule et par jour.
             var gramsPerHen = Math.Min(95 + index * 0.48, 118) + (random.NextDouble() - 0.5) * 2;
-            feeds.Add(new FeedRecord
+            band.FeedRecords.Add(new FeedRecord
             {
-                BandId = band.Id,
                 Date = day,
                 FeedType = index < 14 ? "Aliment pré-ponte" : "Aliment pondeuse",
                 QuantityKg = Math.Round(average * gramsPerHen / 1000),
@@ -109,8 +122,6 @@ public static class DemoDataSeeder
 
             count -= deaths;
         }
-
-        return (eggs, feeds, mortality);
     }
 
     /// <summary>Taux de ponte cible (%) selon le jour depuis le démarrage.</summary>

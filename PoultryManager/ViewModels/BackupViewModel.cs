@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PoultryManager.Data;
 using PoultryManager.Helpers;
+using PoultryManager.Services.Backup;
 using PoultryManager.Services.Navigation;
 using PoultryManager.Services.Settings;
 using PoultryManager.Services.Sharing;
@@ -13,18 +13,18 @@ public partial class BackupViewModel : BaseViewModel
 {
     private readonly ISettingsService _settings;
     private readonly IFileShareService _fileShareService;
-    private readonly AppDatabase _database;
+    private readonly IBackupService _backupService;
     private readonly INavigationService _navigationService;
 
     public BackupViewModel(
         ISettingsService settings,
         IFileShareService fileShareService,
-        AppDatabase database,
+        IBackupService backupService,
         INavigationService navigationService)
     {
         _settings = settings;
         _fileShareService = fileShareService;
-        _database = database;
+        _backupService = backupService;
         _navigationService = navigationService;
         Title = "Sauvegarde des données";
     }
@@ -60,7 +60,7 @@ public partial class BackupViewModel : BaseViewModel
             : "Aucune sauvegarde pour l'instant";
     }
 
-    /// <summary>« Créer une sauvegarde » : copie de la base partagée (Drive, e-mail, clé USB…).</summary>
+    /// <summary>« Créer une sauvegarde » : fichier d'export du compte, partagé (Drive, e-mail, clé USB…).</summary>
     [RelayCommand]
     private async Task CreateBackupAsync()
     {
@@ -68,10 +68,11 @@ public partial class BackupViewModel : BaseViewModel
         try
         {
             var now = Clock();
-            await _fileShareService.ShareCopyAsync(
-                _database.DatabasePath,
-                $"PoultryManager-sauvegarde-{now:yyyy-MM-dd}.db3",
-                "application/octet-stream",
+            var content = await _backupService.CreateBackupAsync();
+            await _fileShareService.ShareAsync(
+                $"PoultryManager-sauvegarde-{now:yyyy-MM-dd}.json",
+                content,
+                "application/json",
                 "Sauvegarde PoultryManager");
             _settings.LastBackupDate = now;
             Refresh();

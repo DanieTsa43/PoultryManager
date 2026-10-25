@@ -2,7 +2,7 @@ using PoultryManager.Models;
 
 namespace PoultryManager.Data.Repositories;
 
-/// <summary>Bandes de poules.</summary>
+/// <summary>Bandes de poules (stockées sur le serveur ; le serveur ne renvoie que celles de l'utilisateur connecté).</summary>
 public interface IBandRepository
 {
     /// <summary>Bandes de l'utilisateur : actives d'abord, puis par date de démarrage décroissante.</summary>

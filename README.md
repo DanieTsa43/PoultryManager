@@ -12,6 +12,7 @@ Développée avec **.NET MAUI** (C# / XAML) selon l'architecture **MVVM**, dans 
 | 2 | Écrans Bienvenue et Connexion | ✅ |
 | 3 | Base de données locale (SQLite), Inscription, session mémorisée | ✅ |
 | 4 | Barre de navigation et écrans métier (03 à 12) | ✅ |
+| 5 | Backend ASP.NET Core + SQL Server (`PoultryManager.Api`), application reliée à l'API | ✅ |
 
 ## Fonctionnalités clés
 
@@ -27,6 +28,19 @@ Développée avec **.NET MAUI** (C# / XAML) selon l'architecture **MVVM**, dans 
 Autres écrans : historique filtrable avec modification / suppression d'une journée (09), profil, exploitation,
 poids moyen d'un œuf, rappel de saisie, sauvegarde de la base et déconnexion (12).
 
+## Backend (étape 5)
+
+Les données ne sont plus dans SQLite sur le téléphone : elles sont sur un serveur **ASP.NET Core Web API** (`PoultryManager.Api`) avec **SQL Server** (EF Core) et authentification **JWT**. Les écrans et fonctionnalités de l'application sont inchangés ; les calculs (taux de ponte, bilan…) restent dans `FarmCalculator`.
+
+**Démarrer**
+1. SQL Server LocalDB (installé avec Visual Studio) ou une autre instance : adapter `ConnectionStrings:Default` dans `PoultryManager.Api/appsettings.json`.
+2. Lancer le projet **PoultryManager.Api** (F5, profil `http://localhost:5080`). La base `PoultryManagerDb` et le compte de démonstration sont créés au premier démarrage (en Development).
+3. Lancer ensuite l'application MAUI (Windows : `localhost`, émulateur Android : `10.0.2.2`). Téléphone réel : renseigner `ApiSettings.BaseUrlOverride` (ex. `http://192.168.1.20:5080`) et utiliser le profil de lancement « accessible depuis un téléphone ».
+
+**Migrations (recommandé)** : `dotnet ef migrations add InitialCreate --project PoultryManager.Api` — l'API les applique alors au démarrage (sinon elle crée la base directement).
+
+**Avant une mise en production** : clé `Jwt:Key` par variable d'environnement, HTTPS (retirer `usesCleartextTraffic` du manifeste Android), `Seed:DemoData` à false, et remplacer la réinitialisation de mot de passe par e-mail (désactivée par défaut, `Auth:AllowDirectPasswordReset`).
+
 ## Prérequis
 
 - **Visual Studio 2026 Community** (gratuit) avec la charge de travail **« Développement .NET Multi-platform App UI »**.
@@ -37,7 +51,7 @@ poids moyen d'un œuf, rappel de saisie, sauvegarde de la base et déconnexion (
 
 ## Compte de démonstration
 
-Au premier lancement, l'application crée dans la base locale un compte de démonstration avec 4 bandes
+Au premier démarrage de l'API (Development), un compte de démonstration avec 4 bandes
 (3 actives, 1 clôturée) et leurs saisies quotidiennes, calculées par rapport à la date du jour :
 
 | Identifiant | Mot de passe |
@@ -85,7 +99,8 @@ Un compte créé avec **Commencer** démarre sans aucune bande.
 | **NETSDK1005** « project.assets.json n'a aucune cible pour net10.0-… » | La restauration NuGet n'a pas abouti. Fermez Visual Studio, supprimez les dossiers `bin` et `obj` du projet, rouvrez la solution, puis clic droit sur la solution › **Restaurer les packages NuGet** et **Régénérer**. Si l'erreur persiste, lancez `dotnet restore` dans le terminal pour voir la cause exacte. |
 | **NETSDK1045** (version de .NET non prise en charge) | Le SDK .NET 10 n'est pas installé : mettez Visual Studio à jour, ou remplacez `net10.0` par `net9.0` dans `PoultryManager.csproj`. |
 | **NU1100 / NU1101** (paquet introuvable) | La source nuget.org manque : `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`. |
-| Données de démonstration à réinitialiser | Désinstallez l'application de l'émulateur (Android) ou supprimez `poultrymanager.db3` (Windows). |
+| Données de démonstration à réinitialiser | Supprimez la base `PoultryManagerDb` (SQL Server) puis relancez l'API. |
+| « Impossible de joindre le serveur » | L'API n'est pas lancée, ou l'adresse est fausse (voir `ApiSettings`). |
 
 ## Architecture du projet
 

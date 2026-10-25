@@ -1,23 +1,22 @@
-using PoultryManager.Data.Repositories;
 using PoultryManager.Helpers;
 using PoultryManager.Models;
-using PoultryManager.Services.Security;
+using PoultryManager.Services.Api;
 
 namespace PoultryManager.Services.Auth;
 
-/// <summary>Authentification à partir des comptes enregistrés dans la base locale.</summary>
+/// <summary>
+/// Authentification auprès du serveur (API ASP.NET Core). Le mot de passe n'est jamais conservé sur l'appareil :
+/// seul le jeton remis par le serveur est mémorisé (si « Se souvenir de moi » est coché).
+/// </summary>
 public sealed class AuthService : IAuthService
 {
-    /// <summary>Clé de stockage de la session mémorisée.</summary>
-    private const string SessionUserIdKey = "session.user_id";
+    private readonly IApiClient _api;
+    private readonly ITokenStore _tokens;
 
-    private readonly IUserRepository _users;
-    private readonly IPreferences _preferences;
-
-    public AuthService(IUserRepository users, IPreferences preferences)
+    public AuthService(IApiClient api, ITokenStore tokens)
     {
-        _users = users;
-        _preferences = preferences;
+        _api = api;
+        _tokens = tokens;
     }
 
     public User? CurrentUser { get; private set; }
@@ -26,66 +25,70 @@ public sealed class AuthService : IAuthService
 
     public async Task<AuthResult> LoginAsync(string identifier, string password, bool rememberSession, CancellationToken cancellationToken = default)
     {
-        var candidates = await _users.FindByIdentifierAsync(identifier);
-
-        // Le calcul de l'empreinte est volontairement coûteux : il s'exécute hors du fil de l'interface.
-        var user = await Task.Run(
-            () => candidates.FirstOrDefault(u => PasswordHasher.Verify(password, u.PasswordHash, u.PasswordSalt)),
-            cancellationToken);
-
-        if (user is null)
+        try
         {
-            return AuthResult.Failure("Identifiant ou mot de passe incorrect.");
+            var response = await _api.PostAsync<LoginResponse>(
+                "api/auth/login", new { identifier, password }, cancellationToken);
+            return await OpenSessionAsync(response, rememberSession);
         }
-
-        OpenSession(user, rememberSession);
-        return AuthResult.Success(user);
+        catch (ApiException ex)
+        {
+            return AuthResult.Failure(ex.Message);
+        }
     }
 
     public async Task<AuthResult> RegisterAsync(RegistrationRequest request, CancellationToken cancellationToken = default)
     {
-        var email = request.Email.Trim();
-        if (await _users.EmailExistsAsync(email))
+        try
         {
-            return AuthResult.Failure("Un compte existe déjà avec cette adresse e-mail.");
+            var response = await _api.PostAsync<LoginResponse>(
+                "api/auth/register",
+                new
+                {
+                    fullName = request.FullName.Trim(),
+                    farmName = request.FarmName.Trim(),
+                    phone = request.Phone.Trim(),
+                    email = request.Email.Trim(),
+                    password = request.Password
+                },
+                cancellationToken);
+            return await OpenSessionAsync(response, rememberSession: true);
         }
-
-        var (hash, salt) = await Task.Run(() => PasswordHasher.Hash(request.Password), cancellationToken);
-
-        var user = new User
+        catch (ApiException ex)
         {
-            FullName = request.FullName.Trim(),
-            FarmName = request.FarmName.Trim(),
-            Phone = request.Phone.Trim(),
-            Email = email,
-            UserName = email.Split('@')[0],
-            PasswordHash = hash,
-            PasswordSalt = salt,
-            CreatedAt = DateTime.Now
-        };
-
-        await _users.AddAsync(user);
-        OpenSession(user, rememberSession: true);
-        return AuthResult.Success(user);
+            return AuthResult.Failure(ex.Message);
+        }
     }
 
     public async Task<bool> TryRestoreSessionAsync()
     {
-        var userId = _preferences.Get(SessionUserIdKey, 0);
-        if (userId <= 0)
+        await _tokens.LoadAsync();
+        if (string.IsNullOrEmpty(_tokens.Token))
         {
             return false;
         }
 
-        var user = await _users.GetByIdAsync(userId);
-        if (user is null)
+        try
         {
-            _preferences.Remove(SessionUserIdKey);
+            var user = await _api.GetAsync<User>("api/auth/me");
+            if (user is null)
+            {
+                return false;
+            }
+
+            CurrentUser = user;
+            return true;
+        }
+        catch (ApiException ex)
+        {
+            // Jeton refusé (expiré, compte supprimé…) : on l'oublie. Serveur injoignable : on le garde pour la prochaine fois.
+            if (ex.StatusCode == 401)
+            {
+                _tokens.Clear();
+            }
+
             return false;
         }
-
-        CurrentUser = user;
-        return true;
     }
 
     public async Task<AuthResult> UpdateProfileAsync(string fullName, string farmName, string phone, string email)
@@ -100,18 +103,32 @@ public sealed class AuthService : IAuthService
             return AuthResult.Failure("Adresse e-mail invalide.");
         }
 
-        if (await _users.EmailExistsAsync(email, CurrentUser.Id))
+        try
         {
-            return AuthResult.Failure("Cette adresse e-mail est déjà utilisée par un autre compte.");
-        }
+            var saved = await _api.PutAsync<User>("api/auth/profile", new
+            {
+                fullName = fullName.Trim(),
+                farmName = farmName.Trim(),
+                phone = phone.Trim(),
+                email = email.Trim()
+            });
 
-        CurrentUser.FullName = fullName.Trim();
-        CurrentUser.FarmName = farmName.Trim();
-        CurrentUser.Phone = phone.Trim();
-        CurrentUser.Email = email.Trim();
-        CurrentUser.UserName = email.Trim().Split('@')[0];
-        await _users.UpdateAsync(CurrentUser);
-        return AuthResult.Success(CurrentUser);
+            if (saved is null)
+            {
+                return AuthResult.Failure("Réponse invalide du serveur.");
+            }
+
+            CurrentUser.FullName = saved.FullName;
+            CurrentUser.FarmName = saved.FarmName;
+            CurrentUser.Phone = saved.Phone;
+            CurrentUser.Email = saved.Email;
+            CurrentUser.UserName = saved.UserName;
+            return AuthResult.Success(CurrentUser);
+        }
+        catch (ApiException ex)
+        {
+            return AuthResult.Failure(ex.Message);
+        }
     }
 
     public async Task<AuthResult> ChangePasswordAsync(string currentPassword, string newPassword)
@@ -121,53 +138,50 @@ public sealed class AuthService : IAuthService
             return AuthResult.Failure("Aucun utilisateur connecté.");
         }
 
-        var user = CurrentUser;
-        var valid = await Task.Run(() => PasswordHasher.Verify(currentPassword, user.PasswordHash, user.PasswordSalt));
-        if (!valid)
+        try
         {
-            return AuthResult.Failure("Le mot de passe actuel est incorrect.");
+            await _api.PostAsync("api/auth/change-password", new { currentPassword, newPassword });
+            return AuthResult.Success(CurrentUser);
         }
-
-        var (hash, salt) = await Task.Run(() => PasswordHasher.Hash(newPassword));
-        user.PasswordHash = hash;
-        user.PasswordSalt = salt;
-        await _users.UpdateAsync(user);
-        return AuthResult.Success(user);
+        catch (ApiException ex)
+        {
+            return AuthResult.Failure(ex.Message);
+        }
     }
 
     public async Task<AuthResult> ResetPasswordAsync(string email, string newPassword)
     {
-        var key = email.Trim();
-        var user = (await _users.FindByIdentifierAsync(key))
-            .FirstOrDefault(u => string.Equals(u.Email, key, StringComparison.OrdinalIgnoreCase));
-        if (user is null)
+        try
         {
-            return AuthResult.Failure("Aucun compte n'est associé à cette adresse e-mail.");
-        }
+            await _api.PostAsync("api/auth/reset-password", new { email = email.Trim(), newPassword });
 
-        var (hash, salt) = await Task.Run(() => PasswordHasher.Hash(newPassword));
-        user.PasswordHash = hash;
-        user.PasswordSalt = salt;
-        await _users.UpdateAsync(user);
-        return AuthResult.Success(user);
+            // Le serveur ne renvoie pas d'utilisateur : on renvoie un succès « vide » (l'écran n'utilise que Succeeded).
+            return AuthResult.Success(new User { Email = email.Trim() });
+        }
+        catch (ApiException ex)
+        {
+            return AuthResult.Failure(ex.Message);
+        }
     }
 
     public void Logout()
     {
         CurrentUser = null;
-        _preferences.Remove(SessionUserIdKey);
+        _tokens.Clear();
     }
 
-    private void OpenSession(User user, bool rememberSession)
+    private async Task<AuthResult> OpenSessionAsync(LoginResponse? response, bool rememberSession)
     {
-        CurrentUser = user;
-        if (rememberSession)
+        if (response is null || string.IsNullOrEmpty(response.Token) || response.User is null)
         {
-            _preferences.Set(SessionUserIdKey, user.Id);
+            return AuthResult.Failure("Réponse invalide du serveur.");
         }
-        else
-        {
-            _preferences.Remove(SessionUserIdKey);
-        }
+
+        await _tokens.SetAsync(response.Token, rememberSession);
+        CurrentUser = response.User;
+        return AuthResult.Success(response.User);
     }
+
+    /// <summary>Réponse du serveur à la connexion ou à l'inscription.</summary>
+    private sealed record LoginResponse(string Token, User User);
 }

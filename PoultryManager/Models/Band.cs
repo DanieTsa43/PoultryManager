@@ -1,22 +1,16 @@
-using SQLite;
-
 namespace PoultryManager.Models;
 
 /// <summary>
 /// Bande : lot de poules pondeuses démarré à une date donnée avec un effectif initial.
 /// </summary>
-[Table("Bands")]
 public sealed class Band
 {
-    [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
 
     /// <summary>Propriétaire de la bande.</summary>
-    [Indexed]
     public int UserId { get; set; }
 
     /// <summary>Nom ou identifiant, ex. « Bande 1 ».</summary>
-    [NotNull]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>Type ou souche (facultatif), ex. « Souche légère ».</summary>

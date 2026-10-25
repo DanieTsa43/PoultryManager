@@ -40,10 +40,9 @@ public sealed class FarmService : IFarmService
 
     public async Task<BandRecords> GetBandRecordsAsync(Band band)
     {
-        var eggs = await _records.GetEggRecordsAsync(band.Id);
-        var feeds = await _records.GetFeedRecordsAsync(band.Id);
-        var mortality = await _records.GetMortalityRecordsAsync(band.Id);
-        return new BandRecords(band, eggs, feeds, mortality);
+        // Une seule requête au serveur pour les trois types de saisies.
+        var set = await _records.GetAllRecordsAsync(band.Id);
+        return new BandRecords(band, set.Eggs, set.Feeds, set.Mortality);
     }
 
     public async Task<BandRecords?> GetBandRecordsAsync(int bandId)

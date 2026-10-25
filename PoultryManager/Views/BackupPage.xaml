@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
     Sauvegarde des données (depuis 12 · Paramètres)
-    Copie du fichier de base de données vers un autre emplacement.
+    Export des données du compte (fichier JSON) vers un autre emplacement.
 -->
 <base:ViewModelPage
     x:Class="PoultryManager.Views.BackupPage"

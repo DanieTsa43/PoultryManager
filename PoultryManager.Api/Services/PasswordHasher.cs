@@ -1,18 +1,14 @@
 using System.Security.Cryptography;
 
-namespace PoultryManager.Services.Security;
+namespace PoultryManager.Api.Services;
 
-/// <summary>
-/// Hachage des mots de passe avec PBKDF2 (SHA-256, sel aléatoire).
-/// Seule l'empreinte est enregistrée en base, jamais le mot de passe.
-/// </summary>
+/// <summary>Hachage PBKDF2 (SHA-256, sel aléatoire). Seule l'empreinte est enregistrée en base.</summary>
 public static class PasswordHasher
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;
-    private const int Iterations = 100_000;
+    private const int Iterations = 600_000; // recommandation OWASP pour PBKDF2-HMAC-SHA256
 
-    /// <summary>Calcule l'empreinte et le sel (en Base64) d'un mot de passe.</summary>
     public static (string Hash, string Salt) Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
@@ -20,7 +16,6 @@ public static class PasswordHasher
         return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
     }
 
-    /// <summary>Vérifie un mot de passe saisi par rapport à l'empreinte enregistrée.</summary>
     public static bool Verify(string password, string storedHash, string storedSalt)
     {
         if (string.IsNullOrEmpty(storedHash) || string.IsNullOrEmpty(storedSalt))

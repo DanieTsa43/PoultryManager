@@ -2,9 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
 using PoultryManager.Constants;
-using PoultryManager.Data;
 using PoultryManager.Data.Repositories;
+using PoultryManager.Services.Api;
 using PoultryManager.Services.Auth;
+using PoultryManager.Services.Backup;
 using PoultryManager.Services.Dialogs;
 using PoultryManager.Services.Farm;
 using PoultryManager.Services.Navigation;
@@ -58,12 +59,12 @@ public static class MauiProgram
     {
         services.AddSingleton<AppShell>();
 
-        // Base de données locale SQLite et dépôts
-        services.AddSingleton(new AppDatabase(
-            Path.Combine(FileSystem.AppDataDirectory, AppConstants.DatabaseFileName)));
-        services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddSingleton<IBandRepository, BandRepository>();
-        services.AddSingleton<IRecordRepository, RecordRepository>();
+        // Accès au serveur (API ASP.NET Core + SQL Server) et dépôts de données
+        services.AddSingleton<ITokenStore, TokenStore>();
+        services.AddSingleton<IApiClient, ApiClient>();
+        services.AddSingleton<IBandRepository, ApiBandRepository>();
+        services.AddSingleton<IRecordRepository, ApiRecordRepository>();
+        services.AddSingleton<IBackupService, BackupService>();
         services.AddSingleton<IAppInitializer, AppInitializer>();
 
         // Services métier

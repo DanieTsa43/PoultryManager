@@ -4,8 +4,8 @@ namespace PoultryManager.Services.Startup;
 public interface IAppInitializer
 {
     /// <summary>
-    /// Crée la base si besoin, ajoute le compte de démonstration au premier lancement
-    /// et rouvre la session mémorisée. Renvoie vrai si un utilisateur est connecté.
+    /// Rouvre la session mémorisée (« Se souvenir de moi ») auprès du serveur.
+    /// Renvoie vrai si un utilisateur est connecté.
     /// </summary>
     Task<bool> InitializeAsync();
 }

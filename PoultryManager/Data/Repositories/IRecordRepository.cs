@@ -5,7 +5,7 @@ namespace PoultryManager.Data.Repositories;
 /// <summary>
 /// Saisies quotidiennes : œufs, aliment, mortalité.
 /// Une seule saisie de chaque type par jour et par bande : enregistrer à nouveau la même date
-/// met à jour la saisie existante.
+/// met à jour la saisie existante. Les données sont stockées sur le serveur (API ASP.NET Core + SQL Server).
 /// </summary>
 public interface IRecordRepository
 {
@@ -41,6 +41,6 @@ public interface IRecordRepository
     /// <summary>Supprime toutes les saisies d'une bande pour un jour donné.</summary>
     Task DeleteDayAsync(int bandId, DateTime date);
 
-    /// <summary>Insertion groupée (données de démonstration).</summary>
-    Task AddRangeAsync(IEnumerable<EggRecord> eggs, IEnumerable<FeedRecord> feeds, IEnumerable<MortalityRecord> mortality);
+    /// <summary>Toutes les saisies d'une bande (œufs, aliment, mortalité) en une seule requête.</summary>
+    Task<BandRecordSet> GetAllRecordsAsync(int bandId);
 }

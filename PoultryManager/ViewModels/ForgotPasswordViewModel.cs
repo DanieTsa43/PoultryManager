@@ -9,8 +9,8 @@ namespace PoultryManager.ViewModels;
 
 /// <summary>
 /// ViewModel de l'écran « Mot de passe oublié » (depuis 01 · Connexion).
-/// L'application fonctionne sans serveur : la réinitialisation se fait sur l'appareil,
-/// en indiquant l'adresse e-mail du compte.
+/// La réinitialisation se fait auprès du serveur, en indiquant l'adresse e-mail du compte
+/// (voir la remarque de sécurité dans AuthController.ResetPassword côté API).
 /// </summary>
 public partial class ForgotPasswordViewModel : BaseViewModel
 {

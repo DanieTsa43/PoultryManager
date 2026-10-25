@@ -3,9 +3,6 @@ namespace PoultryManager.Constants;
 /// <summary>Valeurs fixes de l'application.</summary>
 public static class AppConstants
 {
-    /// <summary>Nom du fichier de base de données SQLite (dans le dossier de données de l'application).</summary>
-    public const string DatabaseFileName = "poultrymanager.db3";
-
     /// <summary>Poids moyen d'un œuf par défaut, en grammes (réglable dans « Unités de mesure »).</summary>
     public const double DefaultEggWeightGrams = 60;
 
